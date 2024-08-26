@@ -26,15 +26,16 @@ public class Resume {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ResumeStatus status;
-    @Lob
-    private String summary;
-    @Lob
-    @Column(columnDefinition = "TEXT")
-    private String suggestions;
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResumeSections> resumeSections = new ArrayList<>();
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Competency> competencies = new ArrayList<>();
+    private List<Language> competencies = new ArrayList<>();
+    @OneToOne(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ResumeSummary resumeSummary;
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Skill> skills;
+    @OneToOne(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private AdditionalDetails additionalDetails;
     @Column(nullable = false)
     private String createdAt;
     @Column(nullable = false)

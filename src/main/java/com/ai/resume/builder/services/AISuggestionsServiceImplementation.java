@@ -31,7 +31,7 @@ public class AISuggestionsServiceImplementation implements AISuggestionsService 
     public AISuggestion generateSuggestions(String title, String sectionType) {
         String generatedText = "";
         String response = Connector.postRequest(huggingFaceBaseUrl, huggingFaceApiKey, title, sectionType);
-        if ("experience".equals(sectionType))
+        if ("professional experience".equals(sectionType))
             generatedText = formatResponseAsBulletPoints(response);
         else generatedText = parseResponse(response);
         aiSuggestion.setGeneratedSuggestion(generatedText);

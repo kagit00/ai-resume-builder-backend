@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService {
         user.getRoles().addAll(userRoles);
         user.setJwtUser(true);
         user.setBio("");
+        user.setTimestamp(DefaultValuesPopulator.getCurrentTimestamp());
         userRepository.save(user);
         return user;
     }

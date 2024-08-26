@@ -2,7 +2,6 @@ package com.ai.resume.builder.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.UUID;
 
 @Getter
@@ -24,15 +23,12 @@ public class ResumeSections {
     private SectionType sectionType;
     @Column(nullable = false)
     private String title;
-    @Column(nullable = true)
     private String organization;
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String startDate;
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String endDate;
     @Lob
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String description;
-    @Column(nullable = true)
-    private String link;
 }

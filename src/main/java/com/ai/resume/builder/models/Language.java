@@ -11,18 +11,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Entity
-public class Competency {
+public class Language {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id", nullable = false)
+    @JoinColumn(name = "resume_id")
     private Resume resume;
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CompetencyType competencyType;
     private String name;
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
+    @Column(nullable = false)
     private ProficiencyLevel proficiencyLevel;
 }
