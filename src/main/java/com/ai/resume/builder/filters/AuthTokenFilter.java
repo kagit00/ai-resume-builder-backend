@@ -2,6 +2,7 @@ package com.ai.resume.builder.filters;
 
 import com.ai.resume.builder.security.JwtUtils;
 import com.ai.resume.builder.services.UserDetailsServiceImpl;
+import com.ai.resume.builder.utilities.AuthUtility;
 import com.ai.resume.builder.utilities.ErrorUtility;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -9,7 +10,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * The type Auth token filter.
@@ -45,13 +45,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) {
         try {
-            String requestTokenHeader = request.getHeader("Authorization");
-            String username = null;
-            String jwtToken = null;
-            if (!StringUtils.isEmpty(requestTokenHeader) && requestTokenHeader.startsWith("Bearer")) {
-                jwtToken = requestTokenHeader.substring(7);
-                username = this.jwtUtils.getUsernameFromToken(jwtToken);
-            }
+            Map<String, String> creds = AuthUtility.retrieveTokenAndUsername(request, jwtUtils);
+            String username = creds.get("username");
+            String jwtToken = creds.get("jwtToken");
+
             if (!Objects.isNull(username) && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
                 if (Boolean.TRUE.equals(this.jwtUtils.validateToken(jwtToken, userDetails))) {

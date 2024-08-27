@@ -12,4 +12,5 @@ import lombok.*;
 @Setter
 public class JwtResponse {
     private String token;
+    private long expiry;
 }

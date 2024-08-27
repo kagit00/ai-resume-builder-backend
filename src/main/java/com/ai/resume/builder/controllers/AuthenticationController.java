@@ -4,11 +4,14 @@ import com.ai.resume.builder.models.JwtRequest;
 import com.ai.resume.builder.models.JwtResponse;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
 
 /**
@@ -28,15 +31,9 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    /**
-     * Generate token response entity.
-     *
-     * @param request the request
-     * @return the response entity
-     */
     @PostMapping(value = "/token", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<JwtResponse> generateToken(@RequestBody JwtRequest request) {
-        return new ResponseEntity<>(this.authenticationService.generateToken(request), HttpStatus.OK);
+    public ResponseEntity<JwtResponse> generateToken(@RequestBody JwtRequest jwtRequest) {
+        return new ResponseEntity<>(this.authenticationService.generateToken(jwtRequest), HttpStatus.OK);
     }
 
     @GetMapping(value = "/current-user", produces = MediaType.APPLICATION_JSON_VALUE)

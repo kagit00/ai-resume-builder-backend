@@ -26,12 +26,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         String accessToken = generateTokenForUser(authentication);
-        // Production environment: set cookie
-        logger.info("jwt token for oauth2 flow: {}", accessToken);
-        response.addHeader("Set-Cookie", "GOOGLE_OAUTH2_TOKEN=" + accessToken + "; Path=/; SameSite=Lax");
         long tokenExpiresAt = jwtUtils.getExpirationDateFromToken(accessToken).getTime();
-        logger.debug("token expires at and now{} {}", tokenExpiresAt, System.currentTimeMillis());
-        response.addHeader("Set-Cookie", "GOOGLE_OAUTH2_TOKEN_EXPIRATION=" + tokenExpiresAt + "; Path=/; SameSite=Lax");
+
+        response.addHeader("Set-Cookie", "GOOGLE_OAUTH2_TOKEN=" + accessToken + "; Path=/; Secure; HttpOnly; SameSite=Lax");
+        response.addHeader("Set-Cookie", "OAUTH2_TOKEN_EXPIRY=" + tokenExpiresAt + "; Path=/; Secure; SameSite=Lax");
+
+        logger.info("jwt token for oauth2 flow: {}", accessToken);
+        logger.debug("token expires at and now {} {}", tokenExpiresAt, System.currentTimeMillis());
+
         response.sendRedirect(uiDomainUri + "/user/dashboard");
     }
 
