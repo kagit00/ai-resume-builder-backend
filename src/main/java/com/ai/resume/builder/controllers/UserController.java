@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 /**
  * The type User controller.
  */
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/users")
 public class UserController {

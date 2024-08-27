@@ -32,7 +32,7 @@ import java.util.List;
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
     @Value("${ui.domain.uri}")
     private String uiDomainUri;
@@ -104,7 +104,7 @@ public class SecurityConfig {
                             .configurationSource(request -> {
                                 CorsConfiguration corsConfiguration = new CorsConfiguration();
                                 corsConfiguration.setAllowedOrigins(List.of(uiDomainUri));
-                                corsConfiguration.addAllowedMethod("*");
+                                corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                                 corsConfiguration.addAllowedHeader("*");
                                 corsConfiguration.setAllowCredentials(true);
                                 return corsConfiguration;

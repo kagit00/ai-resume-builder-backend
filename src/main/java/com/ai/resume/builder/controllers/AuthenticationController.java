@@ -14,7 +14,6 @@ import java.security.Principal;
 /**
  * The type Authentication controller.
  */
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
