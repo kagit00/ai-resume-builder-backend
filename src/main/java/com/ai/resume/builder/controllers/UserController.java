@@ -1,6 +1,7 @@
 package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.NoContent;
+import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -9,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * The type User controller.

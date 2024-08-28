@@ -2,6 +2,7 @@ package com.ai.resume.builder.services;
 
 import com.ai.resume.builder.cache.Cache;
 import com.ai.resume.builder.exceptions.BadRequestException;
+import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.models.UserRole;
 import com.ai.resume.builder.repository.RoleRepository;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 

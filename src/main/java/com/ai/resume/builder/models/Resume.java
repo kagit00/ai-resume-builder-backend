@@ -29,7 +29,7 @@ public class Resume {
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResumeSections> resumeSections = new ArrayList<>();
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Language> competencies = new ArrayList<>();
+    private List<Language> languages = new ArrayList<>();
     @OneToOne(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     private ResumeSummary resumeSummary;
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,6 +1,9 @@
 package com.ai.resume.builder.services;
 
+import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.User;
+
+import java.util.List;
 
 public interface UserService {
     /**

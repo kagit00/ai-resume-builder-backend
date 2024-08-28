@@ -114,7 +114,7 @@ public class SecurityConfig {
                                     .requestMatchers("/oauth2/", "/login/**", "/error").permitAll()
                                     .requestMatchers("/users", "/auth/token").permitAll()
                                     .requestMatchers(
-                                            "/users/**"
+                                            "/users/**", "/resume/**"
                                     )
                                     .hasAnyAuthority(Constant.FREE_USER, Constant.PREMIUM_USER)
                                     .anyRequest().authenticated()
