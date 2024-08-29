@@ -5,6 +5,7 @@ import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.UserServiceImpl;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +19,9 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/users")
+@AllArgsConstructor
 public class UserController {
     private final UserServiceImpl userService;
-
-    /**
-     * Instantiates a new User controller.
-     *
-     * @param userService the user service
-     */
-    public UserController(UserServiceImpl userService) {
-        this.userService = userService;
-    }
 
     /**
      * Register user response entity.

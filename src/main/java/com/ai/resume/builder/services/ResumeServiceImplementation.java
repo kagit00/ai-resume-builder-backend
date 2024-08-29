@@ -7,24 +7,18 @@ import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.repository.UserRepository;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class ResumeServiceImplementation implements ResumeService {
     public final ResumeRepository resumeRepository;
     public final UserRepository userRepository;
-
-    public ResumeServiceImplementation(ResumeRepository resumeRepository, UserRepository userRepository) {
-        this.resumeRepository = resumeRepository;
-        this.userRepository = userRepository;
-    }
 
     @Override
     public Resume getResumeByResumeId(UUID resumeId) {
@@ -64,5 +58,16 @@ public class ResumeServiceImplementation implements ResumeService {
     @Override
     public void deleteResume(UUID resumeId) {
         this.resumeRepository.deleteById(resumeId);
+    }
+
+    @Override
+    public void updateResumeStatus(UUID resumeId) {
+        Resume resume = this.resumeRepository.findById(resumeId).orElseThrow(
+                () -> new NoSuchElementException("Resume not found for id: " + resumeId)
+        );
+
+        resume.setStatus(ResumeStatus.COMPLETED);
+        resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+        resumeRepository.save(resume);
     }
 }

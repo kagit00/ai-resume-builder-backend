@@ -8,6 +8,7 @@ import com.ai.resume.builder.models.UserRole;
 import com.ai.resume.builder.repository.RoleRepository;
 import com.ai.resume.builder.repository.UserRepository;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,18 +19,12 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final Cache cache;
     private final RoleRepository roleRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
-
-    public UserServiceImpl(UserRepository userRepository, Cache cache, RoleRepository roleRepository) {
-        this.userRepository = userRepository;
-        this.cache = cache;
-        this.roleRepository = roleRepository;
-    }
 
     @Override
     public User registerUser(User user) {

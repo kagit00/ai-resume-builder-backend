@@ -4,6 +4,7 @@ import com.ai.resume.builder.models.UserRole;
 import com.ai.resume.builder.repository.RoleRepository;
 import com.ai.resume.builder.repository.UserRepository;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
+import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -18,14 +19,10 @@ import java.util.Set;
 import com.ai.resume.builder.models.User;
 
 @Service
+@AllArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
-    public CustomOAuth2UserService(UserRepository userRepository, RoleRepository roleRepository) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {

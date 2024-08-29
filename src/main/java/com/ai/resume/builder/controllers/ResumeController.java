@@ -2,6 +2,7 @@ package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.services.ResumeServiceImplementation;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +13,9 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/resume")
+@AllArgsConstructor
 public class ResumeController {
     private final ResumeServiceImplementation resumeServiceImplementation;
-
-    public ResumeController(ResumeServiceImplementation resumeServiceImplementation) {
-        this.resumeServiceImplementation = resumeServiceImplementation;
-    }
 
     @GetMapping(value = "/{resumeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Resume> getResumeByResumeId(@PathVariable("resumeId") String resumeId) {
@@ -41,5 +39,11 @@ public class ResumeController {
     public ResponseEntity<List<Resume>> getResumeListByUserId(@PathVariable("userId") long userId) {
         List<Resume> resumes = resumeServiceImplementation.getResumeListOfUser(userId);
         return new ResponseEntity<>(resumes, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{resumeId}/status-update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateStatus(@PathVariable("resumeId") String resumeId) {
+        this.resumeServiceImplementation.updateResumeStatus(UUID.fromString(resumeId));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

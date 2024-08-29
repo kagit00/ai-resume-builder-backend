@@ -1,5 +1,6 @@
 package com.ai.resume.builder.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class ResumeSections {
     private UUID id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
+    @JsonBackReference
     private Resume resume;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -28,7 +30,7 @@ public class ResumeSections {
     private String startDate;
     @Column(nullable = false)
     private String endDate;
-    @Lob
-    @Column(nullable = true, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
+    private String location;
 }

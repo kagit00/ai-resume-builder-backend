@@ -1,6 +1,7 @@
 package com.ai.resume.builder.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,8 +24,8 @@ public class User implements UserDetails {
     private String name;
     @Column(nullable = false)
     private String password;
-    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Resume> resumes = new ArrayList<>();
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,  mappedBy = "user")

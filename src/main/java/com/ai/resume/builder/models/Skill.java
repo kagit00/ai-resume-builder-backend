@@ -1,5 +1,6 @@
 package com.ai.resume.builder.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,5 +20,6 @@ public class Skill {
     private String skillName;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
+    @JsonBackReference
     private Resume resume;
 }

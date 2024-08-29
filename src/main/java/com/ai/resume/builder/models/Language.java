@@ -1,5 +1,6 @@
 package com.ai.resume.builder.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +17,8 @@ public class Language {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id")
+    @JoinColumn(name = "resume_id", nullable = false)
+    @JsonBackReference
     private Resume resume;
     @Column(nullable = false)
     private String name;

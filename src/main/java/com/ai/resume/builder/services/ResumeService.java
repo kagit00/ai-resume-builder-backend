@@ -11,4 +11,5 @@ public interface ResumeService {
     Resume createResume(Resume resume, long userId);
     Resume updateResume(UUID resumeId, Resume resume);
     void deleteResume(UUID resumeId);
+    void updateResumeStatus(UUID resumeId);
 }

@@ -6,6 +6,7 @@ import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +20,9 @@ import java.security.Principal;
  */
 @RestController
 @RequestMapping("/auth")
+@AllArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
-
-    /**
-     * Instantiates a new Authentication controller.
-     *
-     * @param authenticationService the authentication service
-     */
-    public AuthenticationController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
 
     @PostMapping(value = "/token", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JwtResponse> generateToken(@RequestBody JwtRequest jwtRequest) {
