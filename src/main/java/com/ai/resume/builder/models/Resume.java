@@ -30,7 +30,7 @@ public class Resume {
     private ResumeStatus status;
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<ResumeSections> resumeSections = new ArrayList<>();
+    private List<ResumeSection> resumeSections = new ArrayList<>();
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Language> languages = new ArrayList<>();

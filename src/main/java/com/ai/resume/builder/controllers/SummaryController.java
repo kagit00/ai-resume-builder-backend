@@ -18,7 +18,7 @@ public class SummaryController {
 
     @PostMapping(value = "/{resumeId}/summary", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> saveResumeSummary(@RequestBody ResumeSummary resumeSummary, @PathVariable("resumeId") String resumeId) {
-        resumeSummaryServiceImplementation.saveResume(resumeSummary, UUID.fromString(resumeId));
+        resumeSummaryServiceImplementation.saveResumeSummary(resumeSummary, UUID.fromString(resumeId));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

@@ -9,9 +9,9 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "resume_sections")
+@Table(name = "resume_section")
 @Entity
-public class ResumeSections {
+public class ResumeSection {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

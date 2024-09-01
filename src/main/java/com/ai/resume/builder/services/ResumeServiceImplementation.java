@@ -7,13 +7,13 @@ import com.ai.resume.builder.models.SkillsDTO;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.repository.UserRepository;
+import com.ai.resume.builder.utilities.Constant;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.UUID;
+
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -64,7 +64,7 @@ public class ResumeServiceImplementation implements ResumeService {
     @Override
     public void updateResumeStatus(UUID resumeId) {
         Resume resume = this.resumeRepository.findById(resumeId).orElseThrow(
-                () -> new NoSuchElementException("Resume not found for id: " + resumeId)
+                () -> new NoSuchElementException(Constant.RUSUME_NOT_FOUND + resumeId)
         );
 
         resume.setStatus(ResumeStatus.COMPLETED);
@@ -77,13 +77,15 @@ public class ResumeServiceImplementation implements ResumeService {
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new RuntimeException("Resume not found"));
         resume.setSkills(skills.getSkills());
+        resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
         resumeRepository.save(resume);
     }
 
     @Override
     public List<String> getSkills(UUID resumeId) {
         Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new RuntimeException("Resume not found"));
-        return List.of(resume.getSkills().split(","));
+                .orElseThrow(() -> new RuntimeException(Constant.RUSUME_NOT_FOUND + resumeId));
+        String skills = resume.getSkills();
+        return !StringUtils.isEmpty(skills)? List.of(resume.getSkills().split(",")) : new ArrayList<>();
     }
 }

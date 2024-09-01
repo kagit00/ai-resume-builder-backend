@@ -10,6 +10,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.NoSuchElementException;
+
 /**
  * The type Global exception handler.
  */
@@ -55,6 +57,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(InternalServerErrorException.class)
     public ResponseEntity<Error> handleInternalServerErrorException(InternalServerErrorException e) {
+        return new ResponseEntity<>(ErrorUtility.getError(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<Error> handleNoSuchElementException(NoSuchElementException e) {
         return new ResponseEntity<>(ErrorUtility.getError(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

@@ -2,10 +2,12 @@ package com.ai.resume.builder.services;
 
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.Resume;
-import com.ai.resume.builder.models.ResumeSections;
+import com.ai.resume.builder.models.ResumeSection;
 import com.ai.resume.builder.models.SectionType;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.repository.ResumeSectionsRepository;
+import com.ai.resume.builder.utilities.Constant;
+import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -19,24 +21,27 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
     private final ResumeSectionsRepository resumeSectionsRepository;
 
     @Override
-    public ResumeSections saveResumeSections(ResumeSections resumeSections, UUID resumeId, String sectionType) {
-        if (Objects.isNull(resumeSections) || Objects.isNull(resumeId)) {
+    public ResumeSection saveResumeSection(ResumeSection resumeSection, UUID resumeId, String sectionType) {
+        if (Objects.isNull(resumeSection) || Objects.isNull(resumeId)) {
             throw new InternalServerErrorException("Resume id or resume section is null");
         }
 
         Resume resume = resumeRepository.findById(resumeId).orElseThrow(
-                () -> new NoSuchElementException("Resume not found with id: " + resumeId)
+                () -> new NoSuchElementException(Constant.RUSUME_NOT_FOUND + resumeId)
         );
 
-        resumeSections.setSectionType(SectionType.valueOf(sectionType));
-        resumeSections.setResume(resume);
-        return resumeSectionsRepository.save(resumeSections);
+        resumeSection.setSectionType(SectionType.valueOf(sectionType));
+        resumeSection.setResume(resume);
+        resumeSectionsRepository.save(resumeSection);
+        resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+        resumeRepository.save(resume);
+        return resumeSection;
     }
 
     @Override
-    public List<ResumeSections> getResumeSections(UUID resumeId, String sectionType) {
+    public List<ResumeSection> getResumeSections(UUID resumeId, String sectionType) {
         Resume resume = resumeRepository.findById(resumeId).orElseThrow(
-                () -> new NoSuchElementException("Resume not found with id: " + resumeId)
+                () -> new NoSuchElementException(Constant.RUSUME_NOT_FOUND + resumeId)
         );
         if (SectionType.EDUCATION.name().toLowerCase().equals(sectionType)) {
             return resumeSectionsRepository.findByResumeAndSectionType(resume, SectionType.EDUCATION);
@@ -51,11 +56,11 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
     }
 
     @Override
-    public void updateResumeSection(ResumeSections resumeSection, UUID resumeId, UUID resumeSectionId) {
+    public void updateResumeSection(ResumeSection resumeSection, UUID resumeId, UUID resumeSectionId) {
         Resume resume = resumeRepository.findById(resumeId).orElseThrow(
-                () -> new NoSuchElementException("Resume not found with id: " + resumeId)
+                () -> new NoSuchElementException(Constant.RUSUME_NOT_FOUND + resumeId)
         );
-        ResumeSections rs = resumeSectionsRepository.findById(resumeSectionId).orElseThrow(
+        ResumeSection rs = resumeSectionsRepository.findById(resumeSectionId).orElseThrow(
                 () -> new NoSuchElementException("ResumeSection not found with id: " + resumeSectionId)
         );
         if (!StringUtils.isEmpty(resumeSection.getDescription())) rs.setDescription(resumeSection.getDescription());
@@ -67,18 +72,22 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
 
         rs.setResume(resume);
         resumeSectionsRepository.save(rs);
+        resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+        resumeRepository.save(resume);
     }
 
     @Override
     public void deleteResumeSection(UUID resumeId, UUID resumeSectionId) {
         Resume resume = resumeRepository.findById(resumeId).orElseThrow(
-                () -> new NoSuchElementException("Resume not found with id: " + resumeId)
+                () -> new NoSuchElementException(Constant.RUSUME_NOT_FOUND + resumeId)
         );
-        ResumeSections rs = resumeSectionsRepository.findById(resumeSectionId).orElseThrow(
+        ResumeSection rs = resumeSectionsRepository.findById(resumeSectionId).orElseThrow(
                 () -> new NoSuchElementException("ResumeSection not found with id: " + resumeSectionId)
         );
 
         rs.setResume(resume);
         resumeSectionsRepository.delete(rs);
+        resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+        resumeRepository.save(resume);
     }
 }
