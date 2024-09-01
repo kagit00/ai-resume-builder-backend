@@ -13,7 +13,6 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "resume")
 public class Resume {
@@ -38,9 +37,7 @@ public class Resume {
     @OneToOne(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private ResumeSummary resumeSummary;
-    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Skill> skills;
+    private String skills;
     @OneToOne(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private AdditionalDetails additionalDetails;

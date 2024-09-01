@@ -1,6 +1,7 @@
 package com.ai.resume.builder.services;
 
 import com.ai.resume.builder.models.Resume;
+import com.ai.resume.builder.models.SkillsDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,4 +13,6 @@ public interface ResumeService {
     Resume updateResume(UUID resumeId, Resume resume);
     void deleteResume(UUID resumeId);
     void updateResumeStatus(UUID resumeId);
+    void updateSkills(UUID resumeId, SkillsDTO skills);
+    List<String> getSkills(UUID resumeId);
 }

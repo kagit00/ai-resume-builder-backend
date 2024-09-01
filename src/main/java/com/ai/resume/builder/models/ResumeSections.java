@@ -9,7 +9,6 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Table(name = "resume_sections")
 @Entity
 public class ResumeSections {

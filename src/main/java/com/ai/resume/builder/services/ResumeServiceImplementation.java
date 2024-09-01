@@ -3,6 +3,7 @@ package com.ai.resume.builder.services;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.ResumeStatus;
+import com.ai.resume.builder.models.SkillsDTO;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.repository.UserRepository;
@@ -69,5 +70,20 @@ public class ResumeServiceImplementation implements ResumeService {
         resume.setStatus(ResumeStatus.COMPLETED);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
         resumeRepository.save(resume);
+    }
+
+    @Override
+    public void updateSkills(UUID resumeId, SkillsDTO skills) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new RuntimeException("Resume not found"));
+        resume.setSkills(skills.getSkills());
+        resumeRepository.save(resume);
+    }
+
+    @Override
+    public List<String> getSkills(UUID resumeId) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new RuntimeException("Resume not found"));
+        return List.of(resume.getSkills().split(","));
     }
 }

@@ -18,13 +18,24 @@ public class LanguageController {
     private final LanguageServiceImplementation languageServiceImplementation;
 
     @PostMapping(value = "/{resumeId}/language", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> saveLanguage(@RequestBody Language language, @PathVariable("resumeId") String resumeId) {
-        this.languageServiceImplementation.saveLanguage(language, UUID.fromString(resumeId));
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<Language> saveLanguage(@PathVariable("resumeId") String resumeId, @RequestBody Language language) {
+        return new ResponseEntity<>(this.languageServiceImplementation.saveLanguage(UUID.fromString(resumeId), language), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/{resumeId}/language", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Language>> getLanguages(@PathVariable("resumeId") String resumeId) {
         return new ResponseEntity<>(this.languageServiceImplementation.getLanguages(UUID.fromString(resumeId)), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{resumeId}/language/{languageId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateLanguage(@PathVariable("resumeId") String resumeId, @PathVariable("languageId") String languageId, @RequestBody Language language) {
+        this.languageServiceImplementation.updateLanguage(UUID.fromString(resumeId), UUID.fromString(languageId), language);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/{resumeId}/language/{languageId}")
+    public ResponseEntity<?> deleteLanguage(@PathVariable("resumeId") String resumeId, @PathVariable("languageId") String languageId) {
+        this.languageServiceImplementation.deleteLanguage(UUID.fromString(resumeId), UUID.fromString(languageId));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

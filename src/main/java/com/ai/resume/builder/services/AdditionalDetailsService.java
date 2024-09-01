@@ -5,6 +5,7 @@ import com.ai.resume.builder.models.AdditionalDetails;
 import java.util.UUID;
 
 public interface AdditionalDetailsService {
-    void saveAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId);
+    AdditionalDetails saveAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId);
     AdditionalDetails getAdditionalDetails(UUID resumeId);
+    void updateAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId, UUID additionalDetailsId);
 }

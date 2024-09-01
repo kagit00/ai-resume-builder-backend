@@ -3,26 +3,44 @@ package com.ai.resume.builder.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
+import java.util.EnumSet;
 import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
+@Table(name = "language")
 public class Language {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     @JsonBackReference
     private Resume resume;
-    @Column(nullable = false)
+
+    @Column(nullable = false, length = 50)
     private String name;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "proficiency_level", nullable = false)
     private ProficiencyLevel proficiencyLevel;
+
+    @PrePersist
+    @PreUpdate
+    private void validateProficiencyLevel() {
+        if (proficiencyLevel == null) {
+            throw new IllegalArgumentException("Proficiency level cannot be null");
+        }
+
+        if (!EnumSet.of(ProficiencyLevel.NAIVE, ProficiencyLevel.NATIVE, ProficiencyLevel.FLUENT, ProficiencyLevel.EXPERT)
+                .contains(proficiencyLevel)) {
+            throw new IllegalArgumentException("Invalid proficiency level: " + proficiencyLevel);
+        }
+    }
 }
