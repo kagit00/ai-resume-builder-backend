@@ -4,6 +4,7 @@ import com.ai.resume.builder.models.JwtRequest;
 import com.ai.resume.builder.models.JwtResponse;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.AuthenticationService;
+import com.ai.resume.builder.utilities.AuthUtility;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -24,9 +25,19 @@ import java.security.Principal;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @PostMapping(value = "/token", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<JwtResponse> generateToken(@RequestBody JwtRequest jwtRequest) {
-        return new ResponseEntity<>(this.authenticationService.generateToken(jwtRequest), HttpStatus.OK);
+    @PostMapping(value = "/log-in", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JwtResponse> logIn(HttpServletResponse response, @RequestBody JwtRequest jwtRequest) {
+        JwtResponse jwtTokenResponse = authenticationService.generateToken(jwtRequest);
+        return new ResponseEntity<>(jwtTokenResponse, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/log-out", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> logOut(HttpServletResponse response) {
+        AuthUtility.removeCookie(response, "JWT_TOKEN");
+        AuthUtility.removeCookie(response, "JWT_TOKEN_EXPIRY");
+        AuthUtility.removeCookie(response, "GOOGLE_OAUTH2_TOKEN");
+        AuthUtility.removeCookie(response, "OAUTH2_TOKEN_EXPIRY");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/current-user", produces = MediaType.APPLICATION_JSON_VALUE)

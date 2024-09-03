@@ -112,7 +112,7 @@ public class SecurityConfig {
                     .authorizeHttpRequests(auth ->
                             auth
                                     .requestMatchers("/oauth2/", "/login/**", "/error").permitAll()
-                                    .requestMatchers("/users", "/auth/token").permitAll()
+                                    .requestMatchers("/users", "/auth/log-in").permitAll()
                                     .requestMatchers(
                                             "/users/**", "/resume/**"
                                     )

@@ -3,6 +3,9 @@ package com.ai.resume.builder.utilities;
 import com.ai.resume.builder.security.JwtUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,5 +38,14 @@ public final class AuthUtility {
         creds.put("username", username);
         creds.put("jwtToken", jwtToken);
         return creds;
+    }
+
+    public static void removeCookie(HttpServletResponse response, String cookieName) {
+        ResponseCookie cookie = ResponseCookie.from(cookieName, "")
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }
