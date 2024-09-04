@@ -40,7 +40,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie1.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, cookie2.toString());
 
-        logger.info("jwt token for oauth2 flow: {}", accessToken);
+        logger.debug("jwt token for oauth2 flow: {}", accessToken);
         logger.debug("token expires at and now {} {}", tokenExpiresAt, System.currentTimeMillis());
 
         response.sendRedirect(uiDomainUri + "/user/dashboard");
