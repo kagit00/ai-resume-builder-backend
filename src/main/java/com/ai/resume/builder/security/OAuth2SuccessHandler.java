@@ -5,11 +5,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 
 @Component
@@ -28,8 +29,16 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = generateTokenForUser(authentication);
         long tokenExpiresAt = jwtUtils.getExpirationDateFromToken(accessToken).getTime();
 
-        response.addHeader("Set-Cookie", "GOOGLE_OAUTH2_TOKEN=" + accessToken + "; Path=/; Secure; HttpOnly; SameSite=Lax");
-        response.addHeader("Set-Cookie", "OAUTH2_TOKEN_EXPIRY=" + tokenExpiresAt + "; Path=/; Secure; SameSite=Lax");
+        ResponseCookie cookie1 = ResponseCookie.from("GOOGLE_OAUTH2_TOKEN", accessToken)
+                .httpOnly(true).secure(request.isSecure()).path("/").maxAge(3600)
+                .build();
+
+        ResponseCookie cookie2 = ResponseCookie.from("OAUTH2_TOKEN_EXPIRY", String.valueOf(tokenExpiresAt))
+                .secure(request.isSecure()).path("/").maxAge(3600)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie1.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie2.toString());
 
         logger.info("jwt token for oauth2 flow: {}", accessToken);
         logger.debug("token expires at and now {} {}", tokenExpiresAt, System.currentTimeMillis());

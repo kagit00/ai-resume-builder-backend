@@ -5,11 +5,13 @@ import com.ai.resume.builder.models.JwtResponse;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.AuthenticationService;
 import com.ai.resume.builder.utilities.AuthUtility;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,10 +35,7 @@ public class AuthenticationController {
 
     @PostMapping(value = "/log-out", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> logOut(HttpServletResponse response) {
-        AuthUtility.removeCookie(response, "JWT_TOKEN");
-        AuthUtility.removeCookie(response, "JWT_TOKEN_EXPIRY");
-        AuthUtility.removeCookie(response, "GOOGLE_OAUTH2_TOKEN");
-        AuthUtility.removeCookie(response, "OAUTH2_TOKEN_EXPIRY");
+        AuthUtility.logOut(response);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

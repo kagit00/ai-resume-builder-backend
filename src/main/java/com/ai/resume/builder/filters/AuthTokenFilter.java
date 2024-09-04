@@ -85,7 +85,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             Cookie[] cookies = request.getCookies();
             if (!Objects.isNull(cookies)) {
                 for (Cookie cookie : cookies) {
-                    if ("GOOGLE_OAUTH2_TOKEN".equals(cookie.getName()) || "JWT_TOKEN".equals(cookie.getName())) {
+                    if ("GOOGLE_OAUTH2_TOKEN".equals(cookie.getName())) {
                         jwtToken = cookie.getValue();
                         username = jwtUtils.getUsernameFromToken(jwtToken);
                     }

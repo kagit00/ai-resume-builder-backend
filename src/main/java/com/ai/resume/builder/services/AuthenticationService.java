@@ -5,9 +5,6 @@ import com.ai.resume.builder.models.JwtRequest;
 import com.ai.resume.builder.models.JwtResponse;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.security.JwtUtils;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,8 +12,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 /**
  * The type Authentication service.

@@ -18,9 +18,7 @@ public final class AuthUtility {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
-    public static void loOut(HttpServletResponse response) {
-        removeCookie(response, "JWT_TOKEN");
-        removeCookie(response, "JWT_TOKEN_EXPIRY");
+    public static void logOut(HttpServletResponse response) {
         removeCookie(response, "GOOGLE_OAUTH2_TOKEN");
         removeCookie(response, "OAUTH2_TOKEN_EXPIRY");
     }
