@@ -42,7 +42,7 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
     }
 
     @Override
-    @Cacheable(value = "resumeSectionsListCache", key = "#resumeId")
+    @Cacheable(value = "resumeSectionsListCache", key = "#resumeId + '_' + #sectionType")
     public List<ResumeSection> getResumeSections(UUID resumeId, String sectionType) {
         Resume resume = cache.getResumeById(resumeId);
 
