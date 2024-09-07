@@ -35,6 +35,8 @@ public class User implements UserDetails {
     private String bio;
     @Column(nullable = false)
     private String timestamp;
+    @Column(nullable = false)
+    private boolean isNotificationEnabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

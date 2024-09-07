@@ -1,6 +1,7 @@
 package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.NoContent;
+import com.ai.resume.builder.models.Notification;
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.UserServiceImpl;
@@ -18,7 +19,7 @@ import java.util.List;
  * The type User controller.
  */
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
     private final UserServiceImpl userService;
@@ -67,5 +68,11 @@ public class UserController {
     public ResponseEntity<Object> deleteUserByUsername(@PathVariable("username") String username) {
         userService.deleteUserByUsername(username);
         return new ResponseEntity<>(new NoContent(HttpStatus.OK, "User successfully deleted."), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/notification", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateNotificationEnabled(@RequestBody Notification notification) {
+        userService.updateNotificationEnabled(notification);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

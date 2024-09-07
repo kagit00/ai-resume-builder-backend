@@ -28,7 +28,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping(value = "/log-in", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<JwtResponse> logIn(HttpServletResponse response, @RequestBody JwtRequest jwtRequest) {
+    public ResponseEntity<JwtResponse> logIn(@RequestBody JwtRequest jwtRequest) {
         JwtResponse jwtTokenResponse = authenticationService.generateToken(jwtRequest);
         return new ResponseEntity<>(jwtTokenResponse, HttpStatus.OK);
     }
