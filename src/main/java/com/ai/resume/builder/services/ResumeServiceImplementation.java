@@ -1,16 +1,16 @@
 package com.ai.resume.builder.services;
 
+import com.ai.resume.builder.cache.Cache;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
-import com.ai.resume.builder.models.Resume;
-import com.ai.resume.builder.models.ResumeStatus;
-import com.ai.resume.builder.models.SkillsDTO;
-import com.ai.resume.builder.models.User;
+import com.ai.resume.builder.models.*;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.repository.UserRepository;
-import com.ai.resume.builder.utilities.Constant;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,30 +18,47 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 public class ResumeServiceImplementation implements ResumeService {
-    public final ResumeRepository resumeRepository;
-    public final UserRepository userRepository;
+    private final ResumeRepository resumeRepository;
+    private final UserRepository userRepository;
+    private final Cache cache;
 
     @Override
     public Resume getResumeByResumeId(UUID resumeId) {
-        return resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new NoSuchElementException("Resume not found with id: " + resumeId));
+        return cache.getResumeById(resumeId);
     }
 
     @Override
-    public List<Resume> getResumeListOfUser(long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Resume not found with id" ));
-        return resumeRepository.findByUser(user);
+    @Cacheable(value = "resumesListCache", key = "#userId")
+    public Map<String, List<Resume>> getResumeListOfUser(long userId) {
+        User user = cache.getUserById(userId);
 
+        List<Resume> allResumes = resumeRepository.findByUser(user);
+        List<Resume> completedResumes = new ArrayList<>();
+        List<Resume> pendingResumes = new ArrayList<>();
+
+        for (Resume resume : allResumes) {
+            if (ResumeStatus.COMPLETED.equals(resume.getStatus())) {
+                completedResumes.add(resume);
+            } else if (ResumeStatus.IN_PROGRESS.equals(resume.getStatus())) {
+                pendingResumes.add(resume);
+            }
+        }
+        Map<String, List<Resume>> resumes = new HashMap<>();
+        resumes.put("completed_resumes", completedResumes);
+        resumes.put("pending_resumes", pendingResumes);
+
+        return resumes;
     }
 
     @Override
+    @CachePut(value = "resumeCache", key = "#result.id",  unless = "#result == null")
+    @CacheEvict(value = "resumesListCache", allEntries = true)
     public Resume createResume(Resume resume, long userId) {
         if (Objects.isNull(resume) || userId < 1) {
             throw new InternalServerErrorException("Resume and userId must not be null");
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + userId));
+        User user = cache.getUserById(userId);
 
         resume.setUser(user);
         resume.setCreatedAt(DefaultValuesPopulator.getCurrentTimestamp());
@@ -57,16 +74,14 @@ public class ResumeServiceImplementation implements ResumeService {
     }
 
     @Override
+    @CacheEvict(value = {"resumeCache", "resumesListCache"}, allEntries = true)
     public void deleteResume(UUID resumeId) {
         this.resumeRepository.deleteById(resumeId);
     }
 
     @Override
     public void updateResumeStatus(UUID resumeId) {
-        Resume resume = this.resumeRepository.findById(resumeId).orElseThrow(
-                () -> new NoSuchElementException(Constant.RUSUME_NOT_FOUND + resumeId)
-        );
-
+        Resume resume = cache.getResumeById(resumeId);
         resume.setStatus(ResumeStatus.COMPLETED);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
         resumeRepository.save(resume);
@@ -74,17 +89,16 @@ public class ResumeServiceImplementation implements ResumeService {
 
     @Override
     public void updateSkills(UUID resumeId, SkillsDTO skills) {
-        Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new RuntimeException("Resume not found"));
+        Resume resume = cache.getResumeById(resumeId);
         resume.setSkills(skills.getSkills());
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
         resumeRepository.save(resume);
     }
 
     @Override
+    @Cacheable(value = "skillsCache", key = "#resumeId")
     public List<String> getSkills(UUID resumeId) {
-        Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new RuntimeException(Constant.RUSUME_NOT_FOUND + resumeId));
+        Resume resume = cache.getResumeById(resumeId);
         String skills = resume.getSkills();
         return !StringUtils.isEmpty(skills)? List.of(resume.getSkills().split(",")) : new ArrayList<>();
     }

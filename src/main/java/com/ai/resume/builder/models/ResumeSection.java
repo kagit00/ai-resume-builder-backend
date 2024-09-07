@@ -15,7 +15,7 @@ public class ResumeSection {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "resume_id", nullable = false)
     @JsonBackReference
     private Resume resume;

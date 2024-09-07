@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -17,7 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ResumeController {
     private final ResumeServiceImplementation resumeServiceImplementation;
-
     @GetMapping(value = "/{resumeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Resume> getResumeByResumeId(@PathVariable("resumeId") String resumeId) {
         Resume resume = resumeServiceImplementation.getResumeByResumeId(UUID.fromString(resumeId));
@@ -37,8 +37,8 @@ public class ResumeController {
     }
 
     @GetMapping(value = "/user/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Resume>> getResumeListByUserId(@PathVariable("userId") long userId) {
-        List<Resume> resumes = resumeServiceImplementation.getResumeListOfUser(userId);
+    public ResponseEntity<Map<String, List<Resume>>> getResumeListByUserId(@PathVariable("userId") long userId) {
+        Map<String, List<Resume>> resumes = resumeServiceImplementation.getResumeListOfUser(userId);
         return new ResponseEntity<>(resumes, HttpStatus.OK);
     }
 

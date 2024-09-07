@@ -28,10 +28,10 @@ public class Resume {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ResumeStatus status;
-    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<ResumeSection> resumeSections = new ArrayList<>();
-    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Language> languages = new ArrayList<>();
     @OneToOne(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)

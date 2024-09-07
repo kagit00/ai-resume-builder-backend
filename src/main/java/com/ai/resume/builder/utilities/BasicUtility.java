@@ -1,6 +1,7 @@
 package com.ai.resume.builder.utilities;
 
 import com.ai.resume.builder.exceptions.BadRequestException;
+import com.ai.resume.builder.models.Resume;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
