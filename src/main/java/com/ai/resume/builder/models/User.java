@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 
 @Getter
@@ -19,7 +21,9 @@ import java.util.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -32,7 +36,7 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<Resume> resumes = new ArrayList<>();
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,  mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,  mappedBy = "user", orphanRemoval = true)
     private Set<UserRole> roles = new HashSet<>();
     private boolean isJwtUser;
     private boolean isOauthUser;
@@ -40,7 +44,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String timestamp;
     @Column(nullable = false)
-    private boolean isNotificationEnabled;
+    private boolean isNotificationEnabled = true;
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @JsonManagedReference
+    private PaymentDetails paymentDetails;
 
     private static final Logger log = LoggerFactory.getLogger(User.class);
 

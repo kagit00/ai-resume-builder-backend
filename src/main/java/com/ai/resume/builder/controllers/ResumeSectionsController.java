@@ -35,14 +35,14 @@ public class ResumeSectionsController {
 
     @Transactional
     @PutMapping(value = "/{resumeId}/{resumeSectionId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateResumeSection(@RequestBody ResumeSection resumeSection, @PathVariable("resumeId") String resumeId, @PathVariable("resumeSectionId") String resumeSectionId) {
+    public ResponseEntity<Object> updateResumeSection(@RequestBody ResumeSection resumeSection, @PathVariable("resumeId") String resumeId, @PathVariable("resumeSectionId") String resumeSectionId) {
         resumeSectionsServiceImplementation.updateResumeSection(resumeSection, UUID.fromString(resumeId), UUID.fromString(resumeSectionId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Transactional
     @DeleteMapping(value = "/{resumeId}/{resumeSectionId}")
-    public ResponseEntity<?> deleteResumeSection(@PathVariable("resumeId") String resumeId, @PathVariable("resumeSectionId") String resumeSectionId) {
+    public ResponseEntity<Object> deleteResumeSection(@PathVariable("resumeId") String resumeId, @PathVariable("resumeSectionId") String resumeSectionId) {
         resumeSectionsServiceImplementation.deleteResumeSection(UUID.fromString(resumeId), UUID.fromString(resumeSectionId));
         return new ResponseEntity<>(HttpStatus.OK);
     }

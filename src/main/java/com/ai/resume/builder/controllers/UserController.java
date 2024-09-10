@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,20 +51,30 @@ public class UserController {
      * @param user     the user
      * @return the response entity
      */
+    @Transactional
     @PutMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> updateUserByUsername(@PathVariable("username") String username, @Valid @RequestBody User user) {
         return new ResponseEntity<>(userService.updateUserByUsername(username, user), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
     public ResponseEntity<Object> deleteUserById(@PathVariable("userId") long userId) {
         userService.deleteUserByUserId(userId);
         return new ResponseEntity<>(new NoContent(HttpStatus.OK, "User successfully deleted."), HttpStatus.OK);
     }
 
+    @Transactional
     @PutMapping(value = "/notification", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateNotificationEnabled(@RequestBody Notification notification) {
         userService.updateNotificationEnabled(notification);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Transactional
+    @PutMapping(value = "/cancel-membership/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> cancelPremiumMembership(@PathVariable("userId") long userId) {
+        userService.cancelPremiumMembership(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

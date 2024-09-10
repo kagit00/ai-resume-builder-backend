@@ -32,14 +32,14 @@ public class LanguageController {
 
     @Transactional
     @PutMapping(value = "/{resumeId}/language/{languageId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateLanguage(@PathVariable("resumeId") String resumeId, @PathVariable("languageId") String languageId, @RequestBody Language language) {
+    public ResponseEntity<Object> updateLanguage(@PathVariable("resumeId") String resumeId, @PathVariable("languageId") String languageId, @RequestBody Language language) {
         this.languageServiceImplementation.updateLanguage(UUID.fromString(resumeId), UUID.fromString(languageId), language);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Transactional
     @DeleteMapping(value = "/{resumeId}/language/{languageId}")
-    public ResponseEntity<?> deleteLanguage(@PathVariable("resumeId") String resumeId, @PathVariable("languageId") String languageId) {
+    public ResponseEntity<Object> deleteLanguage(@PathVariable("resumeId") String resumeId, @PathVariable("languageId") String languageId) {
         this.languageServiceImplementation.deleteLanguage(UUID.fromString(resumeId), UUID.fromString(languageId));
         return new ResponseEntity<>(HttpStatus.OK);
     }

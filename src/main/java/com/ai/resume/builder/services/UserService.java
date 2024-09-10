@@ -32,4 +32,5 @@ public interface UserService {
     void deleteUserByUserId(long userId);
 
     void updateNotificationEnabled(Notification notification);
+    void cancelPremiumMembership(long userId);
 }

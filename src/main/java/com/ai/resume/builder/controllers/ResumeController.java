@@ -46,7 +46,7 @@ public class ResumeController {
 
     @Transactional
     @PutMapping(value = "/{resumeId}/status-update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateStatus(@PathVariable("resumeId") String resumeId) {
+    public ResponseEntity<Object> updateStatus(@PathVariable("resumeId") String resumeId) {
         this.resumeServiceImplementation.updateResumeStatus(UUID.fromString(resumeId));
         return new ResponseEntity<>(HttpStatus.OK);
     }

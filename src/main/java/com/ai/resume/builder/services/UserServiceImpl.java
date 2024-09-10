@@ -3,10 +3,13 @@ package com.ai.resume.builder.services;
 import com.ai.resume.builder.cache.Cache;
 import com.ai.resume.builder.exceptions.BadRequestException;
 import com.ai.resume.builder.models.Notification;
+import com.ai.resume.builder.models.Role;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.models.UserRole;
 import com.ai.resume.builder.repository.RoleRepository;
 import com.ai.resume.builder.repository.UserRepository;
+import com.ai.resume.builder.repository.UserRoleRepository;
+import com.ai.resume.builder.utilities.Constant;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -15,6 +18,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
@@ -24,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final Cache cache;
     private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
@@ -64,8 +70,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @CacheEvict(value = "userCache", allEntries = true)
     public void deleteUserByUserId(long userId) {
-        User existingUser = userRepository.findById(userId).orElseThrow();
-        userRepository.delete(existingUser);
+        User user = userRepository.findById(userId).orElseThrow();
+        user.setResumes(null);
+        user.setRoles(null);
+        user.setPaymentDetails(null);
+        userRepository.delete(user);
     }
 
     @Override
@@ -79,5 +88,22 @@ public class UserServiceImpl implements UserService {
             user.setNotificationEnabled(isNotificationEnabled);
             userRepository.save(user);
         }
+    }
+
+    @Override
+    @CacheEvict(value = "userCache", allEntries = true)
+    public void cancelPremiumMembership(long userId) {
+        User user = cache.getUserById(userId);
+        Role r = roleRepository.findByRoleName(Constant.PREMIUM_USER);
+
+        user.getRoles().removeIf(userRole -> {
+            if (userRole.getRole().getId() == r.getId()) {
+                userRole.setUser(null);
+                userRoleRepository.delete(userRole);
+                return true;
+            }
+            return false;
+        });
+        userRepository.save(user);
     }
 }

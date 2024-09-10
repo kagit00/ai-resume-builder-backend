@@ -3,8 +3,6 @@ package com.ai.resume.builder.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
-
 import java.util.EnumSet;
 import java.util.UUID;
 

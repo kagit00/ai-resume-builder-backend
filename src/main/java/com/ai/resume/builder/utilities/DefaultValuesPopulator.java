@@ -1,11 +1,9 @@
 package com.ai.resume.builder.utilities;
 
-import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.Role;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.models.UserRole;
 import com.ai.resume.builder.repository.RoleRepository;
-import com.ai.resume.builder.services.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.threeten.bp.OffsetDateTime;

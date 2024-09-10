@@ -32,14 +32,14 @@ public class SummaryController {
 
     @Transactional
     @PutMapping(value = "/{resumeId}/summary", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateResumeSummary(@RequestBody ResumeSummary resumeSummary, @PathVariable("resumeId") String resumeId) {
+    public ResponseEntity<Object> updateResumeSummary(@RequestBody ResumeSummary resumeSummary, @PathVariable("resumeId") String resumeId) {
         resumeSummaryServiceImplementation.updateResume(resumeSummary, UUID.fromString(resumeId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Transactional
     @DeleteMapping(value = "/{resumeId}/summary")
-    public ResponseEntity<?> deleteSummary(@PathVariable("resumeId") String resumeId) {
+    public ResponseEntity<Object> deleteSummary(@PathVariable("resumeId") String resumeId) {
         resumeSummaryServiceImplementation.deleteSummary(UUID.fromString(resumeId));
         return new ResponseEntity<>(HttpStatus.OK);
     }

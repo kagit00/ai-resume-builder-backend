@@ -1,7 +1,6 @@
 package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.AdditionalDetails;
-import com.ai.resume.builder.models.Language;
 import com.ai.resume.builder.services.AdditionalDetailsServiceImplementation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
