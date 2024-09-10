@@ -1,13 +1,7 @@
 package com.ai.resume.builder.cache;
 
-import com.ai.resume.builder.models.Language;
-import com.ai.resume.builder.models.Resume;
-import com.ai.resume.builder.models.ResumeSection;
-import com.ai.resume.builder.models.User;
-import com.ai.resume.builder.repository.LanguageRepository;
-import com.ai.resume.builder.repository.ResumeRepository;
-import com.ai.resume.builder.repository.ResumeSectionsRepository;
-import com.ai.resume.builder.repository.UserRepository;
+import com.ai.resume.builder.models.*;
+import com.ai.resume.builder.repository.*;
 import com.ai.resume.builder.utilities.Constant;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,6 +17,7 @@ public class Cache {
     private final LanguageRepository languageRepository;
     private final ResumeRepository resumeRepository;
     private final ResumeSectionsRepository resumeSectionsRepository;
+    private final RoleRepository roleRepository;
 
     /**
      * Gets user by username.
@@ -58,5 +53,10 @@ public class Cache {
     @Cacheable(value = "userCache", key = "#userId", unless = "#result == null")
     public User getUserById(long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found with id" ));
+    }
+
+    @Cacheable(value = "rolesCache", key = "#roleName", unless = "#result == null")
+    public Role getRoleByName(String roleName) {
+        return roleRepository.findByRoleName(roleName);
     }
 }

@@ -1,4 +1,4 @@
-package com.ai.resume.builder.cache;
+package com.ai.resume.builder.config;
 
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,8 @@ public class CacheConfig {
                 "userCache",
                 "resumesListCache",
                 "resumeCache",
-                "skillsCache"
+                "skillsCache",
+                "rolesCache"
                 );
     }
 }

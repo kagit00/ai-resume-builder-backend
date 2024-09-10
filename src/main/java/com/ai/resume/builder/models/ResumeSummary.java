@@ -14,11 +14,11 @@ import java.util.UUID;
 @Entity
 public class ResumeSummary {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String details;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "resume_id", nullable = false)
     @JsonBackReference
     private Resume resume;

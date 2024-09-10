@@ -9,7 +9,6 @@ import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
     private final Cache cache;
 
     @Override
-    @CachePut(value = "additionalDetailsCache", key = "#result.id", unless = "#result == null")
+    @CachePut(value = "additionalDetailsCache", key = "#resumeId", unless = "#result == null")
     public AdditionalDetails saveAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId) {
         if (Objects.isNull(additionalDetails) || Objects.isNull(resumeId))
             throw new InternalServerErrorException("Additional details or resume id is null");
@@ -32,7 +31,9 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
         Resume resume = cache.getResumeById(resumeId);
 
         additionalDetails.setResume(resume);
+        resume.setAdditionalDetails(additionalDetails);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+
         additionalDetailsRepository.save(additionalDetails);
         resumeRepository.save(resume);
         return additionalDetails;
@@ -46,8 +47,8 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
     }
 
     @Override
-    @CacheEvict(value = "additionalDetailsCache", allEntries = true)
-    public void updateAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId, UUID additionalDetailsId) {
+    @CachePut(value = "additionalDetailsCache", key = "#resumeId", unless = "#result == null")
+    public AdditionalDetails updateAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId, UUID additionalDetailsId) {
         Resume resume = cache.getResumeById(resumeId);
 
         AdditionalDetails ad = additionalDetailsRepository.findByResume(resume);
@@ -56,8 +57,11 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
         if (!StringUtils.isEmpty(additionalDetails.getLinkedInProfileLink())) ad.setLinkedInProfileLink(additionalDetails.getLinkedInProfileLink());
 
         ad.setResume(resume);
-        additionalDetailsRepository.save(ad);
+        resume.setAdditionalDetails(ad);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+
+        additionalDetailsRepository.save(ad);
         resumeRepository.save(resume);
+        return ad;
     }
 }

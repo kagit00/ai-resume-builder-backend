@@ -7,5 +7,5 @@ import java.util.UUID;
 public interface AdditionalDetailsService {
     AdditionalDetails saveAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId);
     AdditionalDetails getAdditionalDetails(UUID resumeId);
-    void updateAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId, UUID additionalDetailsId);
+    AdditionalDetails updateAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId, UUID additionalDetailsId);
 }

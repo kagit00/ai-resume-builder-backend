@@ -11,6 +11,8 @@ import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Objects;
@@ -30,7 +32,7 @@ public class UserServiceImpl implements UserService {
         if (!Objects.isNull(existingUser))
             throw new BadRequestException("User already exists.");
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        Set<UserRole> userRoles = DefaultValuesPopulator.populateDefaultUserRoles(user);
+        Set<UserRole> userRoles = DefaultValuesPopulator.populateDefaultUserRoles(user, roleRepository);
         for (UserRole ur : userRoles) roleRepository.save(ur.getRole());
         user.getRoles().addAll(userRoles);
         user.setJwtUser(true);
@@ -60,10 +62,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserByUsername(String username) {
-        User existingUser = cache.getUserByUsername(username);
-        if (Objects.isNull(existingUser))
-            throw new BadRequestException("User doesn't exist.");
+    @CacheEvict(value = "userCache", allEntries = true)
+    public void deleteUserByUserId(long userId) {
+        User existingUser = userRepository.findById(userId).orElseThrow();
         userRepository.delete(existingUser);
     }
 

@@ -14,6 +14,6 @@ public interface ResumeService {
     Resume updateResume(UUID resumeId, Resume resume);
     void deleteResume(UUID resumeId);
     void updateResumeStatus(UUID resumeId);
-    void updateSkills(UUID resumeId, SkillsDTO skills);
+    List<String> updateSkills(UUID resumeId, SkillsDTO skills);
     List<String> getSkills(UUID resumeId);
 }

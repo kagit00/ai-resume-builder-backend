@@ -24,16 +24,20 @@ public class ResumeSummaryServiceImplementation implements ResumeSummaryService 
     private final Cache cache;
 
     @Override
-    @CachePut(value = "summaryCache", key = "#result.id", unless = "#result == null")
-    public void saveResumeSummary(ResumeSummary resumeSummary, UUID resumeId) {
+    @CachePut(value = "summaryCache", key = "#resumeId", unless = "#result == null")
+    public ResumeSummary saveResumeSummary(ResumeSummary resumeSummary, UUID resumeId) {
         if (Objects.isNull(resumeSummary) || Objects.isNull(resumeId)) {
             throw new InternalServerErrorException("summary and resume id can't be null " + resumeId);
         }
         Resume resume = cache.getResumeById(resumeId);
+
         resumeSummary.setResume(resume);
-        summaryRepository.save(resumeSummary);
+        resume.setResumeSummary(resumeSummary);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+
+        summaryRepository.save(resumeSummary);
         resumeRepository.save(resume);
+        return resumeSummary;
     }
 
     @Override
@@ -59,14 +63,17 @@ public class ResumeSummaryServiceImplementation implements ResumeSummaryService 
     }
 
     @Override
-    @CacheEvict(value = "summaryCache", allEntries = true)
+    @CachePut(value = "summaryCache", key = "#resumeId", unless = "#result == null")
     public void updateResume(ResumeSummary resumeSummary, UUID resumeId) {
         Resume resume = cache.getResumeById(resumeId);
         ResumeSummary rs = resume.getResumeSummary();
         if (!Objects.isNull(rs)) {
             rs.setDetails(resumeSummary.getDetails());
-            summaryRepository.save(rs);
+            rs.setResume(resume);
+            resume.setResumeSummary(rs);
             resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+
+            summaryRepository.save(rs);
             resumeRepository.save(resume);
         } else {
             throw new NoSuchElementException("No summary found for resume with id: " + resumeId);

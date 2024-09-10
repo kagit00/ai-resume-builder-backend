@@ -35,8 +35,9 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
 
         resumeSection.setSectionType(SectionType.valueOf(sectionType));
         resumeSection.setResume(resume);
-        resumeSectionsRepository.save(resumeSection);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+
+        resumeSectionsRepository.save(resumeSection);
         resumeRepository.save(resume);
         return resumeSection;
     }

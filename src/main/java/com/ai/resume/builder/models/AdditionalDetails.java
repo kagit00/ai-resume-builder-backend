@@ -13,7 +13,7 @@ import java.util.UUID;
 @Entity
 public class AdditionalDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Column(nullable = false)
     private String githubLink;
@@ -21,7 +21,7 @@ public class AdditionalDetails {
     private String phoneNumber;
     @Column(nullable = false)
     private String linkedInProfileLink;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "resume_id")
     @JsonBackReference
     private Resume resume;

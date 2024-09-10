@@ -29,12 +29,7 @@ public interface UserService {
      */
     User updateUserByUsername(String username, User user);
 
-    /**
-     * Delete user by username.
-     *
-     * @param username the username
-     */
-    void deleteUserByUsername(String username);
+    void deleteUserByUserId(long userId);
 
     void updateNotificationEnabled(Notification notification);
 }

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,25 +37,29 @@ public class ResumeController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Transactional
     @GetMapping(value = "/user/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, List<Resume>>> getResumeListByUserId(@PathVariable("userId") long userId) {
         Map<String, List<Resume>> resumes = resumeServiceImplementation.getResumeListOfUser(userId);
         return new ResponseEntity<>(resumes, HttpStatus.OK);
     }
 
+    @Transactional
     @PutMapping(value = "/{resumeId}/status-update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateStatus(@PathVariable("resumeId") String resumeId) {
         this.resumeServiceImplementation.updateResumeStatus(UUID.fromString(resumeId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Transactional
     @GetMapping(value = "/{resumeId}/skills", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> getSkills(@PathVariable("resumeId") String resumeId) {
         return new ResponseEntity<>(this.resumeServiceImplementation.getSkills(UUID.fromString(resumeId)), HttpStatus.OK);
     }
 
+    @Transactional
     @PutMapping(value = "/{resumeId}/skills", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateSkills(@PathVariable("resumeId") String resumeId, @RequestBody SkillsDTO skills) {
+    public ResponseEntity<List<String>> updateSkills(@PathVariable("resumeId") String resumeId, @RequestBody SkillsDTO skills) {
         this.resumeServiceImplementation.updateSkills(UUID.fromString(resumeId), skills);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -80,6 +80,7 @@ public class ResumeServiceImplementation implements ResumeService {
     }
 
     @Override
+    @CacheEvict(value = {"resumeCache", "resumesListCache"}, allEntries = true)
     public void updateResumeStatus(UUID resumeId) {
         Resume resume = cache.getResumeById(resumeId);
         resume.setStatus(ResumeStatus.COMPLETED);
@@ -88,11 +89,13 @@ public class ResumeServiceImplementation implements ResumeService {
     }
 
     @Override
-    public void updateSkills(UUID resumeId, SkillsDTO skills) {
+    @CachePut(value = "skillsCache", key = "resumeId")
+    public List<String> updateSkills(UUID resumeId, SkillsDTO skills) {
         Resume resume = cache.getResumeById(resumeId);
         resume.setSkills(skills.getSkills());
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
         resumeRepository.save(resume);
+        return List.of(resume.getSkills().split(","));
     }
 
     @Override

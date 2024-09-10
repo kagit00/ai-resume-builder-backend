@@ -1,10 +1,11 @@
-package com.ai.resume.builder.security;
+package com.ai.resume.builder.config;
 
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.filters.AuthTokenFilter;
 import com.ai.resume.builder.filters.JwtAuthenticationEntryPoint;
 import com.ai.resume.builder.repository.RoleRepository;
 import com.ai.resume.builder.repository.UserRepository;
+import com.ai.resume.builder.security.OAuth2SuccessHandler;
 import com.ai.resume.builder.services.CustomOAuth2UserService;
 import com.ai.resume.builder.utilities.Constant;
 import org.springframework.beans.factory.annotation.Value;
@@ -112,9 +113,9 @@ public class SecurityConfig {
                     .authorizeHttpRequests(auth ->
                             auth
                                     .requestMatchers("/oauth2/", "/login/**", "/error").permitAll()
-                                    .requestMatchers("/users", "/auth/log-in").permitAll()
+                                    .requestMatchers("/user", "/auth/log-in").permitAll()
                                     .requestMatchers(
-                                            "/users/**", "/resume/**"
+                                            "/user/**", "/resume/**"
                                     )
                                     .hasAnyAuthority(Constant.FREE_USER, Constant.PREMIUM_USER)
                                     .anyRequest().authenticated()

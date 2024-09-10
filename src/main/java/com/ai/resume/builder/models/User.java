@@ -1,9 +1,13 @@
 package com.ai.resume.builder.models;
 
+import com.ai.resume.builder.services.UserServiceImpl;
+import com.ai.resume.builder.utilities.Constant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -38,10 +42,22 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private boolean isNotificationEnabled;
 
+    private static final Logger log = LoggerFactory.getLogger(User.class);
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<Authority> authorities = new HashSet<>();
-        this.roles.forEach(role -> authorities.add(new Authority(role.getRole().getRoleName())));
+        log.debug("User {} has roles: {}", this.username, this.roles.size());
+        this.roles.forEach(userRole -> {
+            Role role = userRole.getRole(); // Fetch the role
+            if (role != null) {
+                log.debug("Adding role authority: {}", role.getRoleName());
+                authorities.add(new Authority(role.getRoleName()));
+            } else {
+                log.warn("Null role found for user {}", this.username);
+            }
+        });
+
         return authorities;
     }
 
@@ -58,5 +74,18 @@ public class User implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
+    }
+
+    public boolean hasRole(String roleName) {
+        return roles.stream()
+                .anyMatch(userRole -> userRole.getRole().getRoleName().equalsIgnoreCase(roleName));
+    }
+
+    public boolean isPremiumUser() {
+        return hasRole(Constant.PREMIUM_USER);
+    }
+
+    public boolean isFreeUser() {
+        return hasRole(Constant.FREE_USER);
     }
 }

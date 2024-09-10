@@ -6,6 +6,7 @@ import com.ai.resume.builder.services.EmailServiceImplementation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,7 @@ public class EmailController {
     }
 
     @GetMapping("/send-email")
+    @Transactional
     public ResponseEntity<String> sendEmail(@RequestParam String username, @RequestParam boolean isFreeUser) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("username", username);

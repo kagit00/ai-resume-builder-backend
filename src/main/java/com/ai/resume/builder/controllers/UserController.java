@@ -2,7 +2,6 @@ package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.NoContent;
 import com.ai.resume.builder.models.Notification;
-import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -12,8 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * The type User controller.
@@ -58,15 +55,9 @@ public class UserController {
         return new ResponseEntity<>(userService.updateUserByUsername(username, user), HttpStatus.OK);
     }
 
-    /**
-     * Delete user by username response entity.
-     *
-     * @param username the username
-     * @return the response entity
-     */
-    @DeleteMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> deleteUserByUsername(@PathVariable("username") String username) {
-        userService.deleteUserByUsername(username);
+    @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> deleteUserById(@PathVariable("userId") long userId) {
+        userService.deleteUserByUserId(userId);
         return new ResponseEntity<>(new NoContent(HttpStatus.OK, "User successfully deleted."), HttpStatus.OK);
     }
 
