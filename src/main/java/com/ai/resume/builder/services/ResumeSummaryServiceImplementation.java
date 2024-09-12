@@ -63,14 +63,13 @@ public class ResumeSummaryServiceImplementation implements ResumeSummaryService 
     }
 
     @Override
-    @CachePut(value = "summaryCache", key = "#resumeId", unless = "#result == null")
+    @CacheEvict(value = "summaryCache", allEntries = true)
     public void updateResume(ResumeSummary resumeSummary, UUID resumeId) {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         ResumeSummary rs = resume.getResumeSummary();
-        if (!Objects.isNull(rs)) {
+        if (!Objects.isNull(resumeSummary)) {
             rs.setDetails(resumeSummary.getDetails());
-            rs.setResume(resume);
             resume.setResumeSummary(rs);
             resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
             resumeRepository.save(resume);

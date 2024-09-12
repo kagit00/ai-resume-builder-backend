@@ -20,7 +20,6 @@ import java.util.*;
 @AllArgsConstructor
 public class ResumeServiceImplementation implements ResumeService {
     private final ResumeRepository resumeRepository;
-    private final UserRepository userRepository;
     private final Cache cache;
 
     @Override
@@ -90,7 +89,7 @@ public class ResumeServiceImplementation implements ResumeService {
     }
 
     @Override
-    @CachePut(value = "skillsCache", key = "resumeId")
+    @CachePut(value = "skillsCache", key = "#resumeId")
     public List<String> updateSkills(UUID resumeId, SkillsDTO skills) {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         resume.setSkills(skills.getSkills());

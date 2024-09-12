@@ -10,6 +10,7 @@ import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
     }
 
     @Override
-    @CachePut(value = "additionalDetailsCache", key = "#resumeId", unless = "#result == null")
+    @CacheEvict(value = "additionalDetailsCache", allEntries = true)
     public AdditionalDetails updateAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId, UUID additionalDetailsId) {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
