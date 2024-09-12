@@ -43,7 +43,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         logger.debug("jwt token for oauth2 flow: {}", accessToken);
         logger.debug("token expires at and now {} {}", tokenExpiresAt, System.currentTimeMillis());
 
-        response.sendRedirect(uiDomainUri + "/user/dashboard");
+        if (response.getStatus() == 200)
+            response.sendRedirect(uiDomainUri + "/user/dashboard");
     }
 
     private String generateTokenForUser(Authentication authentication) {

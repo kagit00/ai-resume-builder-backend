@@ -7,6 +7,8 @@ import com.ai.resume.builder.models.ProficiencyLevel;
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.repository.LanguageRepository;
 import com.ai.resume.builder.repository.ResumeRepository;
+import com.ai.resume.builder.utilities.BasicUtility;
+import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
@@ -20,7 +22,6 @@ import java.util.*;
 public class LanguageServiceImplementation implements LanguageService {
     private final ResumeRepository resumeRepository;
     private final LanguageRepository languageRepository;
-    private final Cache cache;
 
     @Override
     @CachePut(value = "languageCache", key = "#result.id", unless = "#result == null")
@@ -35,45 +36,44 @@ public class LanguageServiceImplementation implements LanguageService {
         if (StringUtils.isEmpty(language.getProficiencyLevel().name()))
             throw new InternalServerErrorException("Language proficiency level is required");
 
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         language.setProficiencyLevel(ProficiencyLevel.valueOf(language.getProficiencyLevel().name()));
         language.setResume(resume);
-        languageRepository.save(language);
+        resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+        resume.getLanguages().add(language);
+        resumeRepository.save(resume);
         return language;
     }
 
     @Override
     @Cacheable(value = "languagesListCache", key = "#resumeId")
     public List<Language> getLanguages(UUID resumeId) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         return languageRepository.findByResume(resume);
     }
 
     @Override
     @CacheEvict(value = {"languageCache", "languagesListCache"}, allEntries = true)
     public void updateLanguage(UUID resumeId, UUID languageId, Language language) {
-        Resume resume = cache.getResumeById(resumeId);
-        Language lang = cache.getLanguageById(languageId);
-
-        if (StringUtils.isEmpty(language.getName()))
-            throw new InternalServerErrorException("Language name is required");
-
-        if (StringUtils.isEmpty(language.getProficiencyLevel().name()))
-            throw new InternalServerErrorException("Language proficiency level is required");
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
+        Language lang = languageRepository.findById(languageId).orElseThrow();
 
         lang.setName(language.getName());
         lang.setProficiencyLevel(language.getProficiencyLevel());
         lang.setResume(resume);
-        languageRepository.save(lang);
+        resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+        resumeRepository.save(resume);
     }
 
     @Override
     @CacheEvict(value = {"languageCache", "languagesListCache"}, allEntries = true)
     public void deleteLanguage(UUID resumeId, UUID languageId) {
-        Resume resume = cache.getResumeById(resumeId);
-        Language lang = cache.getLanguageById(languageId);
-        lang.setResume(resume);
-        languageRepository.delete(lang);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
+        Language lang = languageRepository.findById(languageId).orElseThrow();
+        resume.getLanguages().remove(lang);
+        lang.setResume(null);
+        resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+        resumeRepository.save(resume);
     }
 }

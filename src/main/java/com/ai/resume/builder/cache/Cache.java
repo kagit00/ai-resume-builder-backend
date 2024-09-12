@@ -30,12 +30,6 @@ public class Cache {
         return this.userRepository.findByUsername(username);
     }
 
-    @Cacheable(value = "resumeCache", key = "#resumeId", unless = "#result == null")
-    public Resume getResumeById(UUID resumeId) {
-        return resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new NoSuchElementException(Constant.RUSUME_NOT_FOUND + resumeId));
-    }
-
     @Cacheable(value = "languageCache", key = "#languageId")
     public Language getLanguageById(UUID languageId) {
         return languageRepository.findById(languageId).orElseThrow(

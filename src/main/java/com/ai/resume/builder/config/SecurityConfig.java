@@ -118,6 +118,8 @@ public class SecurityConfig {
                                             "/user/**", "/resume/**"
                                     )
                                     .hasAnyAuthority(Constant.FREE_USER, Constant.PREMIUM_USER)
+                                    .requestMatchers("/resume/analysis/**")
+                                    .hasAnyAuthority(Constant.PREMIUM_USER)
                                     .anyRequest().authenticated()
                     ).exceptionHandling(ex ->
                             ex.authenticationEntryPoint(unauthorizedHandler)

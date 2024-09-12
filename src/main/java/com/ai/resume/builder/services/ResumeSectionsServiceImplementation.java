@@ -7,6 +7,7 @@ import com.ai.resume.builder.models.ResumeSection;
 import com.ai.resume.builder.models.SectionType;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.repository.ResumeSectionsRepository;
+import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +23,6 @@ import java.util.*;
 public class ResumeSectionsServiceImplementation implements ResumeSectionsService {
     private final ResumeRepository resumeRepository;
     private final ResumeSectionsRepository resumeSectionsRepository;
-    private final Cache cache;
 
     @Override
     @CachePut(value = "resumeSectionCache", key = "#result.id",  unless = "#result == null")
@@ -31,13 +31,13 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
         if (Objects.isNull(resumeSection) || Objects.isNull(resumeId)) {
             throw new InternalServerErrorException("Resume id or resume section is null");
         }
-        Resume resume = cache.getResumeById(resumeId);
-
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         resumeSection.setSectionType(SectionType.valueOf(sectionType));
         resumeSection.setResume(resume);
-        resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
-
         resumeSectionsRepository.save(resumeSection);
+
+        resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+        resume.getResumeSections().add(resumeSection);
         resumeRepository.save(resume);
         return resumeSection;
     }
@@ -45,7 +45,7 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
     @Override
     @Cacheable(value = "resumeSectionsListCache", key = "#resumeId + '_' + #sectionType")
     public List<ResumeSection> getResumeSections(UUID resumeId, String sectionType) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         if (SectionType.EDUCATION.name().toLowerCase().equals(sectionType))
             return resumeSectionsRepository.findByResumeAndSectionType(resume, SectionType.EDUCATION);
@@ -62,32 +62,31 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
     @Override
     @CacheEvict(value = {"resumeSectionCache", "resumeSectionsListCache"}, allEntries = true)
     public void updateResumeSection(ResumeSection resumeSection, UUID resumeId, UUID resumeSectionId) {
-        Resume resume = cache.getResumeById(resumeId);
-        ResumeSection rs = cache.getResumeSectionById(resumeSectionId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
+        ResumeSection rs = resumeSectionsRepository.findById(resumeSectionId).orElseThrow();
 
-        if (!StringUtils.isEmpty(resumeSection.getDescription())) rs.setDescription(resumeSection.getDescription());
-        if (!StringUtils.isEmpty(resumeSection.getLocation())) rs.setLocation(resumeSection.getLocation());
-        if (!StringUtils.isEmpty(resumeSection.getEndDate())) rs.setEndDate(resumeSection.getEndDate());
-        if (!StringUtils.isEmpty(resumeSection.getStartDate())) rs.setStartDate(resumeSection.getStartDate());
-        if (!StringUtils.isEmpty(resumeSection.getTitle())) rs.setTitle(resumeSection.getTitle());
-        if (!StringUtils.isEmpty(resumeSection.getOrganization())) rs.setOrganization(resumeSection.getOrganization());
-
+        rs.setLocation(resumeSection.getLocation());
+        rs.setDescription(resumeSection.getDescription());
+        rs.setOrganization(resumeSection.getOrganization());
+        rs.setEndDate(resumeSection.getEndDate());
+        rs.setStartDate(resumeSection.getStartDate());
         rs.setResume(resume);
-        resumeSectionsRepository.save(rs);
+
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
+        rs.setResume(resume);
         resumeRepository.save(resume);
     }
 
     @Override
     @CacheEvict(value = {"resumeSectionCache", "resumeSectionsListCache"}, allEntries = true)
     public void deleteResumeSection(UUID resumeId, UUID resumeSectionId) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
+
         ResumeSection rs = resumeSectionsRepository.findById(resumeSectionId).orElseThrow(
                 () -> new NoSuchElementException("ResumeSection not found with id: " + resumeSectionId)
         );
 
-        rs.setResume(resume);
-        resumeSectionsRepository.delete(rs);
+        resume.getResumeSections().remove(rs);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
         resumeRepository.save(resume);
     }

@@ -6,6 +6,7 @@ import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.ResumeSummary;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.repository.SummaryRepository;
+import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -21,7 +22,6 @@ import java.util.UUID;
 public class ResumeSummaryServiceImplementation implements ResumeSummaryService {
     private final SummaryRepository summaryRepository;
     private final ResumeRepository resumeRepository;
-    private final Cache cache;
 
     @Override
     @CachePut(value = "summaryCache", key = "#resumeId", unless = "#result == null")
@@ -29,7 +29,7 @@ public class ResumeSummaryServiceImplementation implements ResumeSummaryService 
         if (Objects.isNull(resumeSummary) || Objects.isNull(resumeId)) {
             throw new InternalServerErrorException("summary and resume id can't be null " + resumeId);
         }
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         resumeSummary.setResume(resume);
         resume.setResumeSummary(resumeSummary);
@@ -43,18 +43,18 @@ public class ResumeSummaryServiceImplementation implements ResumeSummaryService 
     @Override
     @Cacheable(value = "summaryCache", key = "#resumeId")
     public ResumeSummary getSummary(UUID resumeId) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         return summaryRepository.findByResume(resume);
     }
 
     @Override
     @CacheEvict(value = "summaryCache", allEntries = true)
     public void deleteSummary(UUID resumeId) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         ResumeSummary resumeSummary = resume.getResumeSummary();
+
         if (!Objects.isNull(resumeSummary)) {
             resume.setResumeSummary(null);
-            summaryRepository.delete(resumeSummary);
             resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
             resumeRepository.save(resume);
         } else {
@@ -65,15 +65,14 @@ public class ResumeSummaryServiceImplementation implements ResumeSummaryService 
     @Override
     @CachePut(value = "summaryCache", key = "#resumeId", unless = "#result == null")
     public void updateResume(ResumeSummary resumeSummary, UUID resumeId) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
+
         ResumeSummary rs = resume.getResumeSummary();
         if (!Objects.isNull(rs)) {
             rs.setDetails(resumeSummary.getDetails());
             rs.setResume(resume);
             resume.setResumeSummary(rs);
             resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
-
-            summaryRepository.save(rs);
             resumeRepository.save(resume);
         } else {
             throw new NoSuchElementException("No summary found for resume with id: " + resumeId);

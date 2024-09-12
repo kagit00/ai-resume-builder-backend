@@ -5,6 +5,7 @@ import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.*;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.repository.UserRepository;
+import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,7 @@ public class ResumeServiceImplementation implements ResumeService {
 
     @Override
     public Resume getResumeByResumeId(UUID resumeId) {
-        return cache.getResumeById(resumeId);
+        return BasicUtility.getResumeById(resumeId, resumeRepository);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class ResumeServiceImplementation implements ResumeService {
     @Override
     @CacheEvict(value = {"resumeCache", "resumesListCache"}, allEntries = true)
     public void updateResumeStatus(UUID resumeId) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         resume.setStatus(ResumeStatus.COMPLETED);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
         resumeRepository.save(resume);
@@ -91,7 +92,7 @@ public class ResumeServiceImplementation implements ResumeService {
     @Override
     @CachePut(value = "skillsCache", key = "resumeId")
     public List<String> updateSkills(UUID resumeId, SkillsDTO skills) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         resume.setSkills(skills.getSkills());
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
         resumeRepository.save(resume);
@@ -101,7 +102,7 @@ public class ResumeServiceImplementation implements ResumeService {
     @Override
     @Cacheable(value = "skillsCache", key = "#resumeId")
     public List<String> getSkills(UUID resumeId) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         String skills = resume.getSkills();
         return !StringUtils.isEmpty(skills)? List.of(resume.getSkills().split(",")) : new ArrayList<>();
     }

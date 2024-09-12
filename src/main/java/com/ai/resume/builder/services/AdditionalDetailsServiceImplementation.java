@@ -6,6 +6,7 @@ import com.ai.resume.builder.models.AdditionalDetails;
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.repository.AdditionalDetailsRepository;
 import com.ai.resume.builder.repository.ResumeRepository;
+import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +29,7 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
         if (Objects.isNull(additionalDetails) || Objects.isNull(resumeId))
             throw new InternalServerErrorException("Additional details or resume id is null");
 
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         additionalDetails.setResume(resume);
         resume.setAdditionalDetails(additionalDetails);
@@ -42,14 +43,14 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
     @Override
     @Cacheable(value = "additionalDetailsCache", key = "#resumeId")
     public AdditionalDetails getAdditionalDetails(UUID resumeId) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         return additionalDetailsRepository.findByResume(resume);
     }
 
     @Override
     @CachePut(value = "additionalDetailsCache", key = "#resumeId", unless = "#result == null")
     public AdditionalDetails updateAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId, UUID additionalDetailsId) {
-        Resume resume = cache.getResumeById(resumeId);
+        Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         AdditionalDetails ad = additionalDetailsRepository.findByResume(resume);
         if (!StringUtils.isEmpty(additionalDetails.getGithubLink())) ad.setGithubLink(additionalDetails.getGithubLink());

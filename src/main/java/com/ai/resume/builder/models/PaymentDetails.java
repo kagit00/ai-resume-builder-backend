@@ -16,9 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class PaymentDetails implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class PaymentDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
