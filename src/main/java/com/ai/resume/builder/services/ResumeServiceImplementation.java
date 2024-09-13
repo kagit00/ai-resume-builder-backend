@@ -4,7 +4,6 @@ import com.ai.resume.builder.cache.Cache;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.*;
 import com.ai.resume.builder.repository.ResumeRepository;
-import com.ai.resume.builder.repository.UserRepository;
 import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service

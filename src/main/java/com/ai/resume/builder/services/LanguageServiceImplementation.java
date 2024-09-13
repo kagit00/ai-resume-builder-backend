@@ -1,6 +1,5 @@
 package com.ai.resume.builder.services;
 
-import com.ai.resume.builder.cache.Cache;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.Language;
 import com.ai.resume.builder.models.ProficiencyLevel;
@@ -40,6 +39,8 @@ public class LanguageServiceImplementation implements LanguageService {
 
         language.setProficiencyLevel(ProficiencyLevel.valueOf(language.getProficiencyLevel().name()));
         language.setResume(resume);
+        languageRepository.save(language);
+
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
         resume.getLanguages().add(language);
         resumeRepository.save(resume);

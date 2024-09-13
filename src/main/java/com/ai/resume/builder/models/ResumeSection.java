@@ -27,7 +27,6 @@ public class ResumeSection {
     private String organization;
     @Column(nullable = false)
     private String startDate;
-    @Column(nullable = false)
     private String endDate;
     @Column(columnDefinition = "TEXT")
     private String description;

@@ -4,6 +4,7 @@ import com.ai.resume.builder.models.NoContent;
 import com.ai.resume.builder.models.Notification;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.UserServiceImpl;
+import com.ai.resume.builder.validation.ValidPassword;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class UserController {
      * @return the response entity
      */
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> registerUser(@Validated @RequestBody User user) {
+    public ResponseEntity<User> registerUser(@Validated @ValidPassword @RequestBody User user) {
         return new ResponseEntity<>(userService.registerUser(user), HttpStatus.OK);
     }
 

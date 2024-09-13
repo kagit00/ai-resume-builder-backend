@@ -2,9 +2,12 @@ package com.ai.resume.builder.models;
 
 import com.ai.resume.builder.services.UserServiceImpl;
 import com.ai.resume.builder.utilities.Constant;
+import com.ai.resume.builder.validation.ValidEmail;
+import com.ai.resume.builder.validation.ValidPassword;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +30,7 @@ public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @ValidEmail
     @Column(name = "username", nullable = false, unique = true)
     private String username;
     private String name;
@@ -38,8 +42,8 @@ public class User implements UserDetails, Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,  mappedBy = "user", orphanRemoval = true)
     private Set<UserRole> roles = new HashSet<>();
-    private boolean isJwtUser;
-    private boolean isOauthUser;
+    @NotNull
+    private boolean authTypeJwt = false;
     private String bio;
     @Column(nullable = false)
     private String timestamp;

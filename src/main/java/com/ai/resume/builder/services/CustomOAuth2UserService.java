@@ -43,7 +43,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             user = new User();
             user.setUsername(username);
             user.setName(name);
-            user.setOauthUser(true);
+            user.setAuthTypeJwt(false);
             Set<UserRole> userRoles = DefaultValuesPopulator.populateDefaultUserRoles(user, roleRepository);
             for (UserRole ur : userRoles)
                 roleRepository.save(ur.getRole());

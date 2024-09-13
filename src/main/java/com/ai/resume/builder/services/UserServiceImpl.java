@@ -34,14 +34,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(User user) {
+        if (user.isAuthTypeJwt())
+            throw new BadRequestException("authTypeJwt field must be true for manual registration");
+
         User existingUser = cache.getUserByUsername(user.getUsername());
+
         if (!Objects.isNull(existingUser))
             throw new BadRequestException("User already exists.");
+
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+
         Set<UserRole> userRoles = DefaultValuesPopulator.populateDefaultUserRoles(user, roleRepository);
         for (UserRole ur : userRoles) roleRepository.save(ur.getRole());
         user.getRoles().addAll(userRoles);
-        user.setJwtUser(true);
+
         user.setBio("");
         user.setTimestamp(DefaultValuesPopulator.getCurrentTimestamp());
         userRepository.save(user);
