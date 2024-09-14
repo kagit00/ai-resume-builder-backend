@@ -29,6 +29,7 @@ public class UserController {
      * @param user the user
      * @return the response entity
      */
+    @Transactional
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> registerUser(@Validated @ValidPassword @RequestBody User user) {
         return new ResponseEntity<>(userService.registerUser(user), HttpStatus.OK);
@@ -40,6 +41,7 @@ public class UserController {
      * @param username the username
      * @return the user by username
      */
+    @Transactional
     @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
         return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
@@ -58,8 +60,8 @@ public class UserController {
         return new ResponseEntity<>(userService.updateUserByUsername(username, user), HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
+    @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> deleteUserById(@PathVariable("userId") long userId) {
         userService.deleteUserByUserId(userId);
         return new ResponseEntity<>(new NoContent(HttpStatus.OK, "User successfully deleted."), HttpStatus.OK);

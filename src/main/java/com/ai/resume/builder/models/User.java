@@ -1,9 +1,7 @@
 package com.ai.resume.builder.models;
 
-import com.ai.resume.builder.services.UserServiceImpl;
 import com.ai.resume.builder.utilities.Constant;
 import com.ai.resume.builder.validation.ValidEmail;
-import com.ai.resume.builder.validation.ValidPassword;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -49,7 +47,7 @@ public class User implements UserDetails, Serializable {
     private String timestamp;
     @Column(nullable = false)
     private boolean isNotificationEnabled = true;
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     @JsonManagedReference
     private PaymentDetails paymentDetails;
 

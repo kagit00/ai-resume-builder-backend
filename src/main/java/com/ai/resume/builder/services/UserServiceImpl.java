@@ -2,6 +2,7 @@ package com.ai.resume.builder.services;
 
 import com.ai.resume.builder.cache.Cache;
 import com.ai.resume.builder.exceptions.BadRequestException;
+import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.Notification;
 import com.ai.resume.builder.models.Role;
 import com.ai.resume.builder.models.User;
@@ -15,11 +16,8 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(User user) {
-        if (user.isAuthTypeJwt())
+        if (!user.isAuthTypeJwt())
             throw new BadRequestException("authTypeJwt field must be true for manual registration");
 
         User existingUser = cache.getUserByUsername(user.getUsername());
@@ -77,9 +75,11 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(value = "userCache", allEntries = true)
     public void deleteUserByUserId(long userId) {
         User user = userRepository.findById(userId).orElseThrow();
-        user.setResumes(null);
-        user.setRoles(null);
+
+        user.getResumes().clear();
+        user.getRoles().clear();
         user.setPaymentDetails(null);
+
         userRepository.delete(user);
     }
 
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
         boolean isNotificationEnabled = notification.getIsNotificationEnabled();
         long userId = notification.getUserId();
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new InternalServerErrorException("User not found"));
 
         if (user.isNotificationEnabled() != isNotificationEnabled) {
             user.setNotificationEnabled(isNotificationEnabled);
@@ -105,7 +105,6 @@ public class UserServiceImpl implements UserService {
         user.getRoles().removeIf(userRole -> {
             if (userRole.getRole().getId() == r.getId()) {
                 userRole.setUser(null);
-                userRoleRepository.delete(userRole);
                 return true;
             }
             return false;

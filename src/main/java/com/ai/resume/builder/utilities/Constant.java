@@ -9,4 +9,5 @@ public final class Constant {
     public static final String FREE_USER = "FREE_USER";
     public static final String GENERATED_TEXT = "generated_text";
     public static final String RUSUME_NOT_FOUND = "Resume not found for id: ";
+    public static final String CHOICES = "choices";
 }

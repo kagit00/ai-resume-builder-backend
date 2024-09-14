@@ -5,7 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class Connector {
@@ -18,20 +21,38 @@ public final class Connector {
     public static String postRequest(String url, String apiKey, String title, String sectionType) {
         RestTemplate restTemplate = new RestTemplate();
 
+        // Set the headers for the request, including the API key
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + apiKey);
 
-        Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("inputs", title + " - " + sectionType);
+        // Build the request payload for Groq API
+        HttpEntity<Map<String, Object>> entity = getMapHttpEntity(title, sectionType, headers);
 
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
-
+        // Make the POST request
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
 
         String rawResponse = response.getBody();
-        log.debug("Raw Response: {}", rawResponse);
+        log.info("Raw Response: {}", rawResponse);
 
         return rawResponse;
+    }
+
+    private static HttpEntity<Map<String, Object>> getMapHttpEntity(String title, String sectionType, HttpHeaders headers) {
+        Map<String, Object> requestBody = new HashMap<>();
+        List<Map<String, String>> messages = new ArrayList<>();
+
+        // Add user input (title and section type) to the messages array
+        Map<String, String> message = new HashMap<>();
+        message.put("role", "user");
+        message.put("content", "Generate " + sectionType + " for a resume titled: " + title);
+        messages.add(message);
+
+        // Specify the model
+        requestBody.put("messages", messages);
+        requestBody.put("model", "mixtral-8x7b-32768"); // Ensure this model is available in Groq API
+
+        // Wrap the request body and headers in an HttpEntity
+        return new HttpEntity<>(requestBody, headers);
     }
 }
