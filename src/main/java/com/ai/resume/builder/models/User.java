@@ -47,7 +47,7 @@ public class User implements UserDetails, Serializable {
     private String timestamp;
     @Column(nullable = false)
     private boolean isNotificationEnabled = true;
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private PaymentDetails paymentDetails;
 
