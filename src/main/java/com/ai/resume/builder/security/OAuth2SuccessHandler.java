@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
+import java.time.Duration;
 
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -30,11 +31,18 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         long tokenExpiresAt = jwtUtils.getExpirationDateFromToken(accessToken).getTime();
 
         ResponseCookie cookie1 = ResponseCookie.from("GOOGLE_OAUTH2_TOKEN", accessToken)
-                .httpOnly(true).secure(request.isSecure()).path("/").maxAge(3600)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(Duration.ofHours(1))
                 .build();
 
         ResponseCookie cookie2 = ResponseCookie.from("OAUTH2_TOKEN_EXPIRY", String.valueOf(tokenExpiresAt))
-                .secure(request.isSecure()).path("/").maxAge(3600)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(Duration.ofHours(1))
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie1.toString());
