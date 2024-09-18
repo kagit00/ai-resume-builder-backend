@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
+import java.net.URL;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -49,5 +50,14 @@ public final class BasicUtility {
     public static Resume getResumeById(UUID resumeId, ResumeRepository resumeRepository) {
         return resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new NoSuchElementException(Constant.RUSUME_NOT_FOUND + resumeId));
+    }
+
+    public static String getDomainFromUrl(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            return url.getHost();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

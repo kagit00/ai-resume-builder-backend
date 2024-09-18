@@ -38,16 +38,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .maxAge(Duration.ofHours(1))
                 .build();
 
-        ResponseCookie cookie2 = ResponseCookie.from("OAUTH2_TOKEN_EXPIRY", String.valueOf(tokenExpiresAt))
-                .secure(true)
-                .sameSite("None")
-                .path("/")
-                .domain(uiDomainUri)
-                .maxAge(Duration.ofHours(1))
-                .build();
-
         response.addHeader(HttpHeaders.SET_COOKIE, cookie1.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie2.toString());
 
         logger.debug("jwt token for oauth2 flow: {}", accessToken);
         logger.debug("token expires at and now {} {}", tokenExpiresAt, System.currentTimeMillis());
