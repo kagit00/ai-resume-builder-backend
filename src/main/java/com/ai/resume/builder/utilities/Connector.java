@@ -21,7 +21,6 @@ public final class Connector {
     public static String postRequest(String url, String apiKey, String title, String sectionType) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Set the headers for the request, including the API key
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + apiKey);
@@ -42,7 +41,6 @@ public final class Connector {
         Map<String, Object> requestBody = new HashMap<>();
         List<Map<String, String>> messages = new ArrayList<>();
 
-        // Add user input (title and section type) to the messages array
         Map<String, String> message = new HashMap<>();
         message.put("role", "user");
         message.put("content", "Generate " + sectionType + " for a resume titled: " + title);
@@ -50,7 +48,7 @@ public final class Connector {
 
         // Specify the model
         requestBody.put("messages", messages);
-        requestBody.put("model", "mixtral-8x7b-32768"); // Ensure this model is available in Groq API
+        requestBody.put("model", "mixtral-8x7b-32768");
 
         // Wrap the request body and headers in an HttpEntity
         return new HttpEntity<>(requestBody, headers);

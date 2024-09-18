@@ -42,6 +42,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .secure(true)
                 .sameSite("None")
                 .path("/")
+                .domain(uiDomainUri)
                 .maxAge(Duration.ofHours(1))
                 .build();
 
