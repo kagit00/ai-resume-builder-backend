@@ -2,6 +2,7 @@ package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.NoContent;
 import com.ai.resume.builder.models.Notification;
+import com.ai.resume.builder.models.PasswordDTO;
 import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.UserServiceImpl;
 import com.ai.resume.builder.validation.ValidPassword;
@@ -78,6 +79,13 @@ public class UserController {
     @PutMapping(value = "/cancel-membership/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> cancelPremiumMembership(@PathVariable("userId") long userId) {
         userService.cancelPremiumMembership(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Transactional
+    @PutMapping(value = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updatePassword(@RequestBody PasswordDTO passwordDTO) {
+        userService.changePassword(passwordDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

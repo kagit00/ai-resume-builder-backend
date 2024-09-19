@@ -1,6 +1,7 @@
 package com.ai.resume.builder.services;
 
 import com.ai.resume.builder.models.Notification;
+import com.ai.resume.builder.models.PasswordDTO;
 import com.ai.resume.builder.models.User;
 
 public interface UserService {
@@ -33,4 +34,5 @@ public interface UserService {
 
     void updateNotificationEnabled(Notification notification);
     void cancelPremiumMembership(long userId);
+    public void changePassword(PasswordDTO passwordDTO);
 }

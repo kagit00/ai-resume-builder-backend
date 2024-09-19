@@ -3,10 +3,7 @@ package com.ai.resume.builder.services;
 import com.ai.resume.builder.cache.Cache;
 import com.ai.resume.builder.exceptions.BadRequestException;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
-import com.ai.resume.builder.models.Notification;
-import com.ai.resume.builder.models.Role;
-import com.ai.resume.builder.models.User;
-import com.ai.resume.builder.models.UserRole;
+import com.ai.resume.builder.models.*;
 import com.ai.resume.builder.repository.RoleRepository;
 import com.ai.resume.builder.repository.UserRepository;
 import com.ai.resume.builder.repository.UserRoleRepository;
@@ -110,5 +107,23 @@ public class UserServiceImpl implements UserService {
             return false;
         });
         userRepository.save(user);
+    }
+
+    @Override
+    @CacheEvict(value = "userCache", allEntries = true)
+    public void changePassword(PasswordDTO passwordDTO) {
+        User user = cache.getUserById(passwordDTO.getUserId());
+        String existingPasswordHash = user.getPassword();
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!passwordEncoder.matches(passwordDTO.getCurrentPassword(), existingPasswordHash)) {
+            throw new BadRequestException("Current password is wrong.");
+        }
+        if (passwordDTO.getNewPassword().equals(passwordDTO.getConfirmPassword())) {
+            user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
+            userRepository.save(user);
+        } else {
+            throw new BadRequestException("New Password Doesn't Match Confirmed Password.");
+        }
     }
 }
