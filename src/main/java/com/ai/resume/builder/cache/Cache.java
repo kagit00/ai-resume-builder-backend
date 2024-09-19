@@ -2,7 +2,6 @@ package com.ai.resume.builder.cache;
 
 import com.ai.resume.builder.models.*;
 import com.ai.resume.builder.repository.*;
-import com.ai.resume.builder.utilities.Constant;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -33,14 +32,14 @@ public class Cache {
     @Cacheable(value = "languageCache", key = "#languageId")
     public Language getLanguageById(UUID languageId) {
         return languageRepository.findById(languageId).orElseThrow(
-                () -> new NoSuchElementException("Language not found with id: " + languageId)
+                () -> new NoSuchElementException("Language not found")
         );
     }
 
     @Cacheable(value = "resumeSectionCache", key = "#resumeSectionId")
     public ResumeSection getResumeSectionById(UUID resumeSectionId) {
         return resumeSectionsRepository.findById(resumeSectionId).orElseThrow(
-                () -> new NoSuchElementException("Resume Section not found with id: " + resumeSectionId)
+                () -> new NoSuchElementException("Resume Section not found")
         );
     }
 

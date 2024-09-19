@@ -27,7 +27,7 @@ public class LanguageServiceImplementation implements LanguageService {
     @CacheEvict(value = "languagesListCache", allEntries = true)
     public Language saveLanguage(UUID resumeId, Language language) {
         if (Objects.isNull(resumeId) && Objects.isNull(language))
-            throw new InternalServerErrorException("Resume id and language is null.");
+            throw new InternalServerErrorException("Resume id and language should not be empty.");
 
         if (StringUtils.isEmpty(language.getName()))
             throw new InternalServerErrorException("Language name is required");

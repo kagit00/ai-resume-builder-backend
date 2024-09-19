@@ -1,6 +1,5 @@
 package com.ai.resume.builder.services;
 
-import com.ai.resume.builder.cache.Cache;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.ResumeSection;
@@ -10,7 +9,6 @@ import com.ai.resume.builder.repository.ResumeSectionsRepository;
 import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -83,7 +81,7 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         ResumeSection rs = resumeSectionsRepository.findById(resumeSectionId).orElseThrow(
-                () -> new NoSuchElementException("ResumeSection not found with id: " + resumeSectionId)
+                () -> new NoSuchElementException("ResumeSection not found")
         );
 
         resume.getResumeSections().remove(rs);

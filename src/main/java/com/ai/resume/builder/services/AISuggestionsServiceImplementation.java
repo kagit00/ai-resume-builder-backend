@@ -1,5 +1,6 @@
 package com.ai.resume.builder.services;
 
+import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.AISuggestion;
 import com.ai.resume.builder.utilities.Connector;
 import com.ai.resume.builder.utilities.Constant;
@@ -32,6 +33,7 @@ public class AISuggestionsServiceImplementation implements AISuggestionsService 
         // Call the Groq API with the updated method
         String response = Connector.postRequest(groqUrl, groqApiKey, title, sectionType);
         generatedText = parseResponse(response);
+        log.debug(generatedText);
 
         aiSuggestion.setGeneratedSuggestion(generatedText);
         return aiSuggestion;
@@ -39,18 +41,20 @@ public class AISuggestionsServiceImplementation implements AISuggestionsService 
 
     private String parseResponse(String rawResponse) {
         String beautifiedResponse = "";
-        if (Objects.isNull(rawResponse) || rawResponse.isEmpty()) return "No response received from the API.";
+        if (Objects.isNull(rawResponse) || rawResponse.isEmpty())
+            throw new InternalServerErrorException("No response received from the AI.");
 
         try {
             JsonNode root = objectMapper.readTree(rawResponse);
             if (root.has(Constant.CHOICES) && root.get(Constant.CHOICES).isArray()) {
                 beautifiedResponse = root.get("choices").get(0).get("message").get("content").asText();
             } else {
-                return "Unexpected response format or empty array.";
+                throw new InternalServerErrorException("Unexpected response format or empty array.");
             }
-        } catch (JsonProcessingException e) {
-            return "Failed to parse the API response: " + e.getMessage();
+        } catch (Exception e) {
+            throw new InternalServerErrorException(e.getMessage());
         }
+        log.debug(beautifiedResponse);
         return beautifiedResponse;
     }
 }

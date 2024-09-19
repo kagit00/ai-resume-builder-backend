@@ -53,7 +53,7 @@ public class ResumeServiceImplementation implements ResumeService {
     @CacheEvict(value = "resumesListCache", allEntries = true)
     public Resume createResume(Resume resume, long userId) {
         if (Objects.isNull(resume) || userId < 1) {
-            throw new InternalServerErrorException("Resume and userId must not be null");
+            throw new InternalServerErrorException("Resume Id or userId must not be Invalid");
         }
 
         User user = cache.getUserById(userId);

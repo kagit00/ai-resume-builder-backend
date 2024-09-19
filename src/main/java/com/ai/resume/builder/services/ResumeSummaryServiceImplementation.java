@@ -1,6 +1,5 @@
 package com.ai.resume.builder.services;
 
-import com.ai.resume.builder.cache.Cache;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.ResumeSummary;
@@ -27,7 +26,7 @@ public class ResumeSummaryServiceImplementation implements ResumeSummaryService 
     @CachePut(value = "summaryCache", key = "#resumeId", unless = "#result == null")
     public ResumeSummary saveResumeSummary(ResumeSummary resumeSummary, UUID resumeId) {
         if (Objects.isNull(resumeSummary) || Objects.isNull(resumeId)) {
-            throw new InternalServerErrorException("summary and resume id can't be null " + resumeId);
+            throw new InternalServerErrorException("Summary and Resume Id can't be invalid");
         }
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
@@ -58,7 +57,7 @@ public class ResumeSummaryServiceImplementation implements ResumeSummaryService 
             resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
             resumeRepository.save(resume);
         } else {
-            throw new NoSuchElementException("No summary found for resume with id: " + resumeId);
+            throw new NoSuchElementException("No Summary Found");
         }
     }
 

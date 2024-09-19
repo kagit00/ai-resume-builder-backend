@@ -1,6 +1,5 @@
 package com.ai.resume.builder.services;
 
-import com.ai.resume.builder.exceptions.BadRequestException;
 import org.apache.http.entity.ContentType;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.ResumeAnalysisResult;
@@ -14,9 +13,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,54 +48,6 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
 
         int matchScore = (matchedKeywords.size() * 100) / jobKeywords.size();
         return new ResumeAnalysisResult(matchScore, matchedKeywords, missingKeywords);
-    }
-
-    // Extract text from uploaded file (PDF or DOCX)
-    public String extractTextFromFile(MultipartFile file) {
-        try {
-            String fileName = file.getOriginalFilename();
-            String fileExtension;
-            if (!StringUtils.isEmpty(fileName))
-                fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
-            else {
-                throw new BadRequestException("File name is empty.");
-            }
-
-            if (fileExtension.equalsIgnoreCase("pdf")) {
-                return extractTextFromPdf(file);
-            } else if (fileExtension.equalsIgnoreCase("docx")) {
-                return extractTextFromDocx(file);
-            }
-        } catch (Exception e) {
-            throw  new InternalServerErrorException(e.getMessage());
-        }
-        return "";
-    }
-
-    // Extract text from PDF
-    private String extractTextFromPdf(MultipartFile file) {
-        try {
-            PDDocument document = PDDocument.load(file.getInputStream());
-            PDFTextStripper pdfStripper = new PDFTextStripper();
-            String text = pdfStripper.getText(document);
-            document.close();
-            return text;
-        } catch (Exception e) {
-            throw  new InternalServerErrorException(e.getMessage());
-        }
-    }
-
-    // Extract text from DOCX (Word Document)
-    private String extractTextFromDocx(MultipartFile file) {
-        try {
-            XWPFDocument doc = new XWPFDocument(file.getInputStream());
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
-            String text = extractor.getText();
-            doc.close();
-            return text;
-        } catch (Exception e) {
-            throw  new InternalServerErrorException(e.getMessage());
-        }
     }
 
     private List<String> extractKeywordsFromJobDescription(String jobDescription) {
@@ -173,7 +121,7 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
                     String jsonResponse = EntityUtils.toString(responseEntity);
                     return extractTextFromJson(jsonResponse);
                 } else {
-                    throw new InternalServerErrorException("Empty response from OCR API");
+                    throw new InternalServerErrorException("Empty response from OCR");
                 }
             }
         } catch (Exception e) {

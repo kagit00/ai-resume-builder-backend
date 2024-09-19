@@ -27,8 +27,11 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
     @Override
     @CachePut(value = "additionalDetailsCache", key = "#resumeId", unless = "#result == null")
     public AdditionalDetails saveAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId) {
-        if (Objects.isNull(additionalDetails) || Objects.isNull(resumeId))
-            throw new InternalServerErrorException("Additional details or resume id is null");
+        if (Objects.isNull(additionalDetails))
+            throw new InternalServerErrorException("Additional Details Should've Valid Value");
+
+        if (Objects.isNull(resumeId))
+            throw new InternalServerErrorException("Resume Id is Not Valid");
 
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
