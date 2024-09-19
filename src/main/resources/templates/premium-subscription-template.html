@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* Sky blue background */
+            padding: 20px;
+            color: #333;
+        }
+        .email-container {
+            background-color: #ffffff;
+            padding: 25px;
+            margin: 0 auto;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #dceffc; /* Slight border to add clarity */
+        }
+        h1 {
+            color: #007acc; /* Sky blue text color */
+            text-align: center;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #4a4a4a;
+        }
+        .highlight {
+            color: #007acc; /* Sky blue for emphasis */
+            font-weight: bold;
+        }
+        .cta-button {
+            display: block;
+            width: fit-content;
+            background-color: #007acc;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <h1 th:text="${subject}"></h1>
+    <p>Dear <span th:text="${name}">User</span>,</p>
+    <p>
+        Congratulations on becoming a <span class="highlight">Premium Member</span>! You now have access to all the exclusive features that will enhance your experience and help you build the perfect resume with ease.
+    </p>
+    <p>
+        As a premium member, you will enjoy benefits such as:
+    </p>
+    <ul>
+        <li>Unlimited resume downloads</li>
+        <li>All Basic Featues</li>
+        <li>Analyze Your Resumes & Get Insights</li>
+        <li>Download Your Resumes (in PDF)</li>
+        <li>Share Resumes on Social</li>
+        <li>And much more!</li>
+    </ul>
+    <p>
+        Start exploring your premium features by visiting your dashboard. Simply log in to your account and enjoy the enhanced experience.
+    </p>
+
+    <p style="margin-top: 20px;">Thank you for choosing our service! We are excited to have you as part of our premium community.</p>
+    <p class="highlight">The Resume Builder Team</p>
+</div>
+</body>
+</html>

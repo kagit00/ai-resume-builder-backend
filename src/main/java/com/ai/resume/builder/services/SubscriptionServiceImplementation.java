@@ -25,6 +25,7 @@ public class SubscriptionServiceImplementation implements SubscriptionService {
     private final UserRepository userRepository;
     private final PaymentDetailsRepository paymentDetailsRepository;
     private final TransactionDetailsRepository transactionDetailsRepository;
+    private final EmailServiceImplementation emailService;
 
     @Override
     public Result<Transaction> subscribe(CheckoutRequest request, long userId) {
@@ -57,6 +58,9 @@ public class SubscriptionServiceImplementation implements SubscriptionService {
 
                 logger.debug("user has these roles: {}", user.getRoles());
                 userRepository.save(user);
+
+                if (user.isNotificationEnabled())
+                    emailService.sendPremiumSubscriptionEmail(user.getUsername(), user.getName());
             } else {
                 // Handle the failure case
                 logger.error("Transaction failed: {}", transactionResult.getMessage());

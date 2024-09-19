@@ -26,13 +26,14 @@ public class EmailController {
 
     @GetMapping("/send-email")
     @Transactional
-    public ResponseEntity<String> sendEmail(@RequestParam String name, @RequestParam boolean isFreeUser) {
+    public ResponseEntity<String> sendEmail(@RequestParam String username, @RequestParam String name, @RequestParam boolean isFreeUser) {
         Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("username", username);
         templateModel.put("name", name);
         templateModel.put("resumeLink", uiDomainUri);
 
         try {
-            emailService.sendResumeCompletionEmail(name, "Your Resume is Ready", templateModel, isFreeUser);
+            emailService.sendResumeCompletionEmail(username, name, name + ", Your Resume is Ready", templateModel, isFreeUser);
             return new ResponseEntity<>("Email sent successfully!", HttpStatus.OK);
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
