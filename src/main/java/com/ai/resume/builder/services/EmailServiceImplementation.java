@@ -45,7 +45,7 @@ public class EmailServiceImplementation implements EmailService {
     @Override
     public void sendPremiumSubscriptionEmail(String to, String name) {
         String htmlBody = "";
-        String subject = "Thank You, " + name + ", For Being a Premium Member.";
+        String subject = "Thank You For Being a Premium Member.";
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("username", to);
         templateModel.put("name", name);

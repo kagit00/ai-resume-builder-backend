@@ -45,7 +45,7 @@ public class Cache {
 
     @Cacheable(value = "userCache", key = "#userId", unless = "#result == null")
     public User getUserById(long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found with id" ));
+        return userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
     }
 
     @Cacheable(value = "rolesCache", key = "#roleName", unless = "#result == null")
