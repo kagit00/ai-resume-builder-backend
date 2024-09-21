@@ -28,9 +28,7 @@ public class ResumeSection {
     @Pattern(regexp = "^[a-zA-Z0-9 .,\\-()]{1,100}$", message = "Invalid organization name")
     private String organization;
     @Column(nullable = false)
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Invalid start date format, expected YYYY-MM-DD")
     private String startDate;
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Invalid start date format, expected YYYY-MM-DD")
     private String endDate;
     @Column(columnDefinition = "TEXT")
     private String description;
