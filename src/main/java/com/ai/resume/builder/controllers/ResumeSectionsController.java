@@ -2,6 +2,7 @@ package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.ResumeSection;
 import com.ai.resume.builder.services.ResumeSectionsServiceImplementation;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +21,7 @@ public class ResumeSectionsController {
 
     @Transactional
     @PostMapping(value = "/{resumeId}/{sectionType}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResumeSection> saveResumeSection(@RequestBody ResumeSection resumeSection, @PathVariable("resumeId") String resumeId, @PathVariable("sectionType") String sectionType) {
+    public ResponseEntity<ResumeSection> saveResumeSection(@RequestBody @Valid ResumeSection resumeSection, @PathVariable("resumeId") String resumeId, @PathVariable("sectionType") String sectionType) {
         return new ResponseEntity<>(
                 resumeSectionsServiceImplementation.saveResumeSection(resumeSection, UUID.fromString(resumeId), sectionType),
                 HttpStatus.CREATED
@@ -35,7 +36,7 @@ public class ResumeSectionsController {
 
     @Transactional
     @PutMapping(value = "/{resumeId}/{resumeSectionId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateResumeSection(@RequestBody ResumeSection resumeSection, @PathVariable("resumeId") String resumeId, @PathVariable("resumeSectionId") String resumeSectionId) {
+    public ResponseEntity<Object> updateResumeSection(@RequestBody @Valid ResumeSection resumeSection, @PathVariable("resumeId") String resumeId, @PathVariable("resumeSectionId") String resumeSectionId) {
         resumeSectionsServiceImplementation.updateResumeSection(resumeSection, UUID.fromString(resumeId), UUID.fromString(resumeSectionId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
