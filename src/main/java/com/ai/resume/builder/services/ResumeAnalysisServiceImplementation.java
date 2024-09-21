@@ -1,5 +1,6 @@
 package com.ai.resume.builder.services;
 
+import com.ai.resume.builder.exceptions.BadRequestException;
 import org.apache.http.entity.ContentType;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.ResumeAnalysisResult;
@@ -32,6 +33,11 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
 
     @Override
     public ResumeAnalysisResult analyzeResume(String resumeContent, String jobDescription) {
+        if (StringUtils.isEmpty(resumeContent) || StringUtils.isEmpty(jobDescription)) {
+            throw new BadRequestException("Resume File Or Job Description is Missing.");
+        }
+
+        jobDescription = jobDescription.replaceAll("<[^>]*>", "");
         List<String> jobKeywords = extractKeywordsFromJobDescription(jobDescription);
 
         List<String> matchedKeywords = new ArrayList<>();

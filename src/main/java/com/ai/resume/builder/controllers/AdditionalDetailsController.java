@@ -2,6 +2,7 @@ package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.AdditionalDetails;
 import com.ai.resume.builder.services.AdditionalDetailsServiceImplementation;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,7 +19,7 @@ public class AdditionalDetailsController {
 
     @Transactional
     @PostMapping(value = "/{resumeId}/additional-details", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AdditionalDetails> saveAdditionalDetails(@RequestBody AdditionalDetails additionalDetails, @PathVariable("resumeId") String resumeId) {
+    public ResponseEntity<AdditionalDetails> saveAdditionalDetails(@RequestBody @Valid AdditionalDetails additionalDetails, @PathVariable("resumeId") String resumeId) {
         return new ResponseEntity<>(this.additionalDetailsServiceImplementation.saveAdditionalDetails(additionalDetails, UUID.fromString(resumeId)), HttpStatus.CREATED);
     }
 
@@ -30,7 +31,7 @@ public class AdditionalDetailsController {
 
     @Transactional
     @PutMapping(value = "/{resumeId}/additional-details/{additionalDetailsId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AdditionalDetails> updateAdditionalDetails(@RequestBody AdditionalDetails additionalDetails, @PathVariable("resumeId") String resumeId, @PathVariable("additionalDetailsId") String additionalDetailsId) {
+    public ResponseEntity<AdditionalDetails> updateAdditionalDetails(@RequestBody @Valid AdditionalDetails additionalDetails, @PathVariable("resumeId") String resumeId, @PathVariable("additionalDetailsId") String additionalDetailsId) {
         this.additionalDetailsServiceImplementation.updateAdditionalDetails(additionalDetails, UUID.fromString(resumeId), UUID.fromString(additionalDetailsId));
         return new ResponseEntity<>(HttpStatus.OK);
     }

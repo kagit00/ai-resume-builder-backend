@@ -29,6 +29,7 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
         if (Objects.isNull(resumeSection) || Objects.isNull(resumeId)) {
             throw new InternalServerErrorException("Resume id or resume section is null");
         }
+
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         resumeSection.setSectionType(SectionType.valueOf(sectionType));
         resumeSection.setResume(resume);

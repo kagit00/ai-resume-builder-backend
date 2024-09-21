@@ -2,6 +2,7 @@ package com.ai.resume.builder.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import java.util.EnumSet;
 import java.util.UUID;
@@ -23,6 +24,7 @@ public class Language {
     private Resume resume;
 
     @Column(nullable = false, length = 50)
+    @Pattern(regexp = "^[a-zA-Z ]{1,50}$", message = "Invalid language name")
     private String name;
 
     @Enumerated(EnumType.STRING)

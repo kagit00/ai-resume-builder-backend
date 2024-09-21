@@ -3,6 +3,7 @@ package com.ai.resume.builder.controllers;
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.SkillsDTO;
 import com.ai.resume.builder.services.ResumeServiceImplementation;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -59,7 +60,7 @@ public class ResumeController {
 
     @Transactional
     @PutMapping(value = "/{resumeId}/skills", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<String>> updateSkills(@PathVariable("resumeId") String resumeId, @RequestBody SkillsDTO skills) {
+    public ResponseEntity<List<String>> updateSkills(@PathVariable("resumeId") String resumeId, @RequestBody @Valid SkillsDTO skills) {
         this.resumeServiceImplementation.updateSkills(UUID.fromString(resumeId), skills);
         return new ResponseEntity<>(HttpStatus.OK);
     }

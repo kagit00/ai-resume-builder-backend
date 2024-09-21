@@ -57,11 +57,12 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         AdditionalDetails ad = additionalDetailsRepository.findByResume(resume);
-        if (!StringUtils.isEmpty(additionalDetails.getGithubLink())) ad.setGithubLink(additionalDetails.getGithubLink());
-        if (!StringUtils.isEmpty(additionalDetails.getPhoneNumber())) ad.setPhoneNumber(additionalDetails.getPhoneNumber());
-        if (!StringUtils.isEmpty(additionalDetails.getLinkedInProfileLink())) ad.setLinkedInProfileLink(additionalDetails.getLinkedInProfileLink());
 
+        ad.setGithubLink(additionalDetails.getGithubLink());
+        ad.setPhoneNumber(additionalDetails.getPhoneNumber());
+        ad.setLinkedInProfileLink(additionalDetails.getLinkedInProfileLink());
         ad.setResume(resume);
+
         resume.setAdditionalDetails(ad);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
 

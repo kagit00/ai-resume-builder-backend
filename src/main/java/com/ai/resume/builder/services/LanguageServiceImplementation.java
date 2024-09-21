@@ -9,7 +9,6 @@ import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,12 +27,6 @@ public class LanguageServiceImplementation implements LanguageService {
     public Language saveLanguage(UUID resumeId, Language language) {
         if (Objects.isNull(resumeId) && Objects.isNull(language))
             throw new InternalServerErrorException("Resume id and language should not be empty.");
-
-        if (StringUtils.isEmpty(language.getName()))
-            throw new InternalServerErrorException("Language name is required");
-
-        if (StringUtils.isEmpty(language.getProficiencyLevel().name()))
-            throw new InternalServerErrorException("Language proficiency level is required");
 
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
