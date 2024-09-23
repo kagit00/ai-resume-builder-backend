@@ -1,0 +1,70 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "dev4" ]
+  pull_request:
+    branches: [ "dev4" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Google Cloud SDK
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}  
+          export_default_credentials: true
+
+      # Step 3: Fetch secrets from Google Secret Manager
+      - name: Fetch Secrets
+        run: |
+          export DB_URL=$(gcloud secrets versions access latest --secret="DB_URL")
+          export DB_USERNAME=$(gcloud secrets versions access latest --secret="DB_USERNAME")
+          export DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD")
+          export OAUTH2_CLIENT_ID=$(gcloud secrets versions access latest --secret="OAUTH2_REGISTRATION_CLIENT_ID")
+          export OAUTH2_CLIENT_SECRET=$(gcloud secrets versions access latest --secret="OAUTH2_REGISTRATION_CLIENT_PASSWORD")
+          export BRAINTREE_MERCHANT_ID=$(gcloud secrets versions access latest --secret="BRAINTREE_SANDBOX_MERCHANT_ID")
+          export BRAINTREE_PUBLIC_KEY=$(gcloud secrets versions access latest --secret="BRAINTREE_SANDBOX_PUBLIC_KEY")
+          export BRAINTREE_PRIVATE_KEY=$(gcloud secrets versions access latest --secret="BRAINTREE_SANDBOX_PRIVATE_KEY")
+          export OCR_API_KEY=$(gcloud secrets versions access latest --secret="OCR_API_KEY")
+          export GROQ_API_KEY=$(gcloud secrets versions access latest --secret="GROQ_API_KEY")
+          export MAIL_ID=$(gcloud secrets versions access latest --secret="MAIL_ID")
+          export MAIL_PASSKEY=$(gcloud secrets versions access latest --secret="MAIL_PASSKEY")
+
+      # Step 4: Replace placeholders in app.yaml
+      - name: Replace placeholders in app.yaml
+        run: |
+          sed -i "s/SPRING_DATASOURCE_URL_PLACEHOLDER/$DB_URL/" app.yaml
+          sed -i "s/SPRING_DATASOURCE_USERNAME_PLACEHOLDER/$DB_USERNAME/" app.yaml
+          sed -i "s/SPRING_DATASOURCE_PASSWORD_PLACEHOLDER/$DB_PASSWORD/" app.yaml
+          sed -i "s/OAUTH2_CLIENT_ID_PLACEHOLDER/$OAUTH2_CLIENT_ID/" app.yaml
+          sed -i "s/OAUTH2_CLIENT_SECRET_PLACEHOLDER/$OAUTH2_CLIENT_SECRET/" app.yaml
+          sed -i "s/BRAINTREE_MERCHANT_ID_PLACEHOLDER/$BRAINTREE_MERCHANT_ID/" app.yaml
+          sed -i "s/BRAINTREE_PUBLIC_KEY_PLACEHOLDER/$BRAINTREE_PUBLIC_KEY/" app.yaml
+          sed -i "s/BRAINTREE_PRIVATE_KEY_PLACEHOLDER/$BRAINTREE_PRIVATE_KEY/" app.yaml
+          sed -i "s/OCR_API_KEY_PLACEHOLDER/$OCR_API_KEY/" app.yaml
+          sed -i "s/GROQ_API_KEY_PLACEHOLDER/$GROQ_API_KEY/" app.yaml
+          sed -i "s/MAIL_ID_PLACEHOLDER/$MAIL_ID/" app.yaml
+          sed -i "s/MAIL_PASSKEY_PLACEHOLDER/$MAIL_PASSKEY/" app.yaml
+
+      # Step 5: Deploy to Google App Engine
+      - name: Deploy to App Engine
+        run: |
+          gcloud app deploy --quiet
