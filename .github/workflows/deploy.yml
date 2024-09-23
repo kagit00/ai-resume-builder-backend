@@ -16,8 +16,10 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    env:
+      UI_DOMAIN_URI: ${{ secrets.UI_DOMAIN_URI }}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
 
     steps:
       # Step 1: Check out the code
@@ -38,9 +40,9 @@ jobs:
       # Step 3: Fetch secrets from Google Secret Manager
       - name: Fetch Secrets
         run: |
-          export DB_URL=$(gcloud secrets versions access latest --secret="DB_URL")
-          export DB_USERNAME=$(gcloud secrets versions access latest --secret="DB_USERNAME")
-          export DB_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD")
+          export SPRING_DATASOURCE_URL=$(gcloud secrets versions access latest --secret="DB_URL")
+          export SPRING_DATASOURCE_USERNAME=$(gcloud secrets versions access latest --secret="DB_USERNAME")
+          export SPRING_DATASOURCE_PASSWORD=$(gcloud secrets versions access latest --secret="DB_PASSWORD")
           export OAUTH2_CLIENT_ID=$(gcloud secrets versions access latest --secret="OAUTH2_REGISTRATION_CLIENT_ID")
           export OAUTH2_CLIENT_SECRET=$(gcloud secrets versions access latest --secret="OAUTH2_REGISTRATION_CLIENT_PASSWORD")
           export BRAINTREE_MERCHANT_ID=$(gcloud secrets versions access latest --secret="BRAINTREE_SANDBOX_MERCHANT_ID")
@@ -50,16 +52,14 @@ jobs:
           export GROQ_API_KEY=$(gcloud secrets versions access latest --secret="GROQ_API_KEY")
           export MAIL_ID=$(gcloud secrets versions access latest --secret="MAIL_ID")
           export MAIL_PASSKEY=$(gcloud secrets versions access latest --secret="MAIL_PASSKEY")
-          export OAUTH2_REDIRECT_URI=${{ secrets.REDIRECT_URI }}
-          export GROQ_API_URL=${{ secrets.GROQ_API_URL }}
-          export OCR_API_URL=${{ secrets.OCR_API_URL }}
-
-      # Step 4: Replace placeholders in app.yaml
-      - name: Replace placeholders in app.yaml
+    
+      # Step 3: Prepare app.yaml for deployment
+      - name: Prepare app.yaml
         run: |
-          sed -i "s/SPRING_DATASOURCE_URL_PLACEHOLDER/$DB_URL/" app.yaml
-          sed -i "s/SPRING_DATASOURCE_USERNAME_PLACEHOLDER/$DB_USERNAME/" app.yaml
-          sed -i "s/SPRING_DATASOURCE_PASSWORD_PLACEHOLDER/$DB_PASSWORD/" app.yaml
+          # Replace placeholders with environment variables
+          sed -i "s/SPRING_DATASOURCE_URL_PLACEHOLDER/$SPRING_DATASOURCE_URL/" app.yaml
+          sed -i "s/SPRING_DATASOURCE_USERNAME_PLACEHOLDER/$SPRING_DATASOURCE_USERNAME/" app.yaml
+          sed -i "s/SPRING_DATASOURCE_PASSWORD_PLACEHOLDER/$SPRING_DATASOURCE_PASSWORD/" app.yaml
           sed -i "s/OAUTH2_CLIENT_ID_PLACEHOLDER/$OAUTH2_CLIENT_ID/" app.yaml
           sed -i "s/OAUTH2_CLIENT_SECRET_PLACEHOLDER/$OAUTH2_CLIENT_SECRET/" app.yaml
           sed -i "s/BRAINTREE_MERCHANT_ID_PLACEHOLDER/$BRAINTREE_MERCHANT_ID/" app.yaml
@@ -69,22 +69,8 @@ jobs:
           sed -i "s/GROQ_API_KEY_PLACEHOLDER/$GROQ_API_KEY/" app.yaml
           sed -i "s/MAIL_ID_PLACEHOLDER/$MAIL_ID/" app.yaml
           sed -i "s/MAIL_PASSKEY_PLACEHOLDER/$MAIL_PASSKEY/" app.yaml
-          sed -i "s/APP_SECURITY_SECRET_KEY/passwordpassword/" app.yaml  # Added Encryption Config
-          sed -i "s/LOGGING_LEVEL_ROOT/INFO/" app.yaml  # Added Logging
-          sed -i "s/SPRING_DATASOURCE_DRIVER_CLASS_NAME/org.postgresql.Driver/" app.yaml  # Added DB Config
-          sed -i "s/SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT/org.hibernate.dialect.PostgreSQLDialect/" app.yaml
-          sed -i "s/SPRING_JPA_HIBERNATE_DDL_AUTO/update/" app.yaml
-          sed -i "s|SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI|$OAUTH2_REDIRECT_URI|" app.yaml
-          sed -i "s/SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE/profile,email/" app.yaml  # Added Oauth2 Config
-          sed -i "s/SPRING_MAIL_HOST/smtp.gmail.com/" app.yaml  # Added Mail Config
-          sed -i "s/SPRING_MAIL_PORT/587/" app.yaml
-          sed -i "s/SPRING_MAIL_USERNAME/${MAIL_ID}/" app.yaml  # Added Mail Username
-          sed -i "s/SPRING_MAIL_PASSWORD/${MAIL_PASSKEY}/" app.yaml  # Added Mail Password
-          sed -i "s|GROQ_API_URL_PLACEHOLDER|$GROQ_API_URL|" app.yaml  # Added GROQ API URL
-          sed -i "s|OCR_API_URL_PLACEHOLDER|$OCR_API_URL|" app.yaml  # Added OCR API URL
-          sed -i "s|SPRING_PROFILES_ACTIVE_PLACEHOLDER|prod|" app.yaml
-
-      # Step 5: Deploy to Google App Engine
-      - name: Deploy to App Engine
+    
+      # Step 4: Deploy Application to Google App Engine
+      - name: Deploy to Google App Engine
         run: |
-          gcloud app deploy --quiet
+          gcloud app deploy app.yaml --quiet
