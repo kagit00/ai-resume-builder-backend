@@ -28,8 +28,9 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: '${{ secrets.GCP_PROJECT_ID }}'
-          version: 'latest'  # Specify the version if needed
+          project_id: "${{ secrets.GCP_PROJECT_ID }}"
+          credentials_json: "${{ secrets.GCP_SCRT_KEY }}"
+          create_credentials_file: true
 
       # Step 3: Fetch secrets from Google Secret Manager
       - name: Fetch Secrets
