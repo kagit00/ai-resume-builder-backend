@@ -47,9 +47,6 @@ public class User implements UserDetails, Serializable {
     private String timestamp;
     @Column(nullable = false)
     private boolean isNotificationEnabled = true;
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private PaymentDetails paymentDetails;
 
     private static final Logger log = LoggerFactory.getLogger(User.class);
 

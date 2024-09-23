@@ -75,7 +75,6 @@ public class UserServiceImpl implements UserService {
 
         user.getResumes().clear();
         user.getRoles().clear();
-        user.setPaymentDetails(null);
 
         userRepository.delete(user);
     }

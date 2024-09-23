@@ -23,7 +23,6 @@ public class SubscriptionServiceImplementation implements SubscriptionService {
     private final Cache cache;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
-    private final PaymentDetailsRepository paymentDetailsRepository;
     private final TransactionDetailsRepository transactionDetailsRepository;
     private final EmailServiceImplementation emailService;
 
@@ -48,7 +47,6 @@ public class SubscriptionServiceImplementation implements SubscriptionService {
 
             User user = cache.getUserById(userId);
             if (user.isFreeUser() && !user.isPremiumUser()) {
-                savePaymentDetails(user, transaction, request);
                 saveTransactionDetails(user, transaction, request);
 
                 Set<UserRole> userRoles = DefaultValuesPopulator.populateDefaultPremiumUserRoles(user, roleRepository);
@@ -73,21 +71,6 @@ public class SubscriptionServiceImplementation implements SubscriptionService {
     @Override
     public BraintreeClientToken generateClientToken() {
         return new BraintreeClientToken(braintreeGateway.clientToken().generate());
-    }
-
-    private void savePaymentDetails(User user, Transaction transaction, CheckoutRequest request) {
-        PaymentDetails paymentDetails = user.getPaymentDetails();
-        if (Objects.isNull(paymentDetails)) {
-            paymentDetails = new PaymentDetails();
-            paymentDetails.setUser(user);
-        }
-
-        if (!Objects.isNull(transaction.getCustomer())) {
-            paymentDetails.setBraintreeCustomerId(transaction.getCustomer().getId());
-        }
-        paymentDetails.setPaymentMethodToken(request.getPaymentMethodNonce());
-        user.setPaymentDetails(paymentDetails);
-        paymentDetailsRepository.save(paymentDetails);
     }
 
     private void saveTransactionDetails(User user, Transaction transaction, CheckoutRequest request) {
