@@ -28,7 +28,7 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: YOUR_GCP_PROJECT_ID
+          project_id: '${{ secrets.GCP_PROJECT_ID }}'
           version: 'latest'  # Specify the version if needed
 
       # Step 3: Authenticate with the service account key
