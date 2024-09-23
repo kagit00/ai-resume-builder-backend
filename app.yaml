@@ -26,5 +26,5 @@ env_variables:
   SPRING_MAIL_PORT: "SPRING_MAIL_PORT_PLACEHOLDER"
   SPRING_MAIL_USERNAME: "${MAIL_ID}"
   SPRING_MAIL_PASSWORD: "${MAIL_PASSKEY}"
-  GROQ_API_URL: "https://api.groq.com/openai/v1/chat/completions"
-  OCR_API_URL: "https://api.ocr.space/parse/image"
+  GROQ_API_URL: "GROQ_API_URL_PLACEHOLDER"
+  OCR_API_URL: "OCR_API_URL_PLACEHOLDER"
