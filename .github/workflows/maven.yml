@@ -47,6 +47,7 @@ jobs:
           export GROQ_API_KEY=$(gcloud secrets versions access latest --secret="GROQ_API_KEY")
           export MAIL_ID=$(gcloud secrets versions access latest --secret="MAIL_ID")
           export MAIL_PASSKEY=$(gcloud secrets versions access latest --secret="MAIL_PASSKEY")
+          export REDIRECT_URI=${{ secrets.OAUTH2_REDIRECT_URI }}
 
       # Step 4: Replace placeholders in app.yaml
       - name: Replace placeholders in app.yaml
@@ -63,6 +64,19 @@ jobs:
           sed -i "s/GROQ_API_KEY_PLACEHOLDER/$GROQ_API_KEY/" app.yaml
           sed -i "s/MAIL_ID_PLACEHOLDER/$MAIL_ID/" app.yaml
           sed -i "s/MAIL_PASSKEY_PLACEHOLDER/$MAIL_PASSKEY/" app.yaml
+          sed -i "s/APP_SECURITY_SECRET_KEY/passwordpassword/" app.yaml  # Added Encryption Config
+          sed -i "s/LOGGING_LEVEL_ROOT/INFO/" app.yaml  # Added Logging
+          sed -i "s/SPRING_DATASOURCE_DRIVER_CLASS_NAME/org.postgresql.Driver/" app.yaml  # Added DB Config
+          sed -i "s/SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT/org.hibernate.dialect.PostgreSQLDialect/" app.yaml
+          sed -i "s/SPRING_JPA_HIBERNATE_DDL_AUTO/update/" app.yaml
+          sed -i "s|SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI|$REDIRECT_URI|" app.yaml
+          sed -i "s/SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE/profile,email/" app.yaml  # Added Oauth2 Config
+          sed -i "s/SPRING_MAIL_HOST/smtp.gmail.com/" app.yaml  # Added Mail Config
+          sed -i "s/SPRING_MAIL_PORT/587/" app.yaml
+          sed -i "s/SPRING_MAIL_USERNAME/${MAIL_ID}/" app.yaml  # Added Mail Username
+          sed -i "s/SPRING_MAIL_PASSWORD/${MAIL_PASSKEY}/" app.yaml  # Added Mail Password
+          sed -i "s/GROQ_API_URL/https:\/\/api.groq.com\/openai\/v1\/chat\/completions/" app.yaml  # Added GROQ API URL
+          sed -i "s/OCR_API_URL/https:\/\/api.ocr.space\/parse\/image/" app.yaml  # Added OCR API URL
 
       # Step 5: Deploy to Google App Engine
       - name: Deploy to App Engine
