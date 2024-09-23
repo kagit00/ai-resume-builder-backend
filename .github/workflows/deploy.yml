@@ -35,7 +35,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0.4.0
         with:
-          credentials_json: '${{ secrets.GCP_SECRET_KEY }}'
+          credentials_json: '${{ secrets.GCP_SCRT_KEY }}'
 
       # Step 3: Fetch secrets from Google Secret Manager
       - name: Fetch Secrets
