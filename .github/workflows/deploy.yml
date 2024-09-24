@@ -52,6 +52,9 @@ jobs:
           export GROQ_API_KEY=$(gcloud secrets versions access latest --secret="GROQ_API_KEY")
           export MAIL_ID=$(gcloud secrets versions access latest --secret="MAIL_ID")
           export MAIL_PASSKEY=$(gcloud secrets versions access latest --secret="MAIL_PASSKEY")
+          echo "SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL"
+          echo "SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME"
+          echo "SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD"
     
       # Step 3: Prepare app.yaml for deployment
       - name: Prepare app.yaml
