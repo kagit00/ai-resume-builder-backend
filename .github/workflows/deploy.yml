@@ -72,8 +72,8 @@ jobs:
           sed -i "s|GROQ_API_KEY_PLACEHOLDER|$GROQ_API_KEY|" app.yaml
           sed -i "s|MAIL_ID_PLACEHOLDER|$MAIL_ID|" app.yaml
           sed -i "s|MAIL_PASSKEY_PLACEHOLDER|$MAIL_PASSKEY|" app.yaml
+          echo "app.yaml after replacement:"
+          cat app.yaml
     
       # Step 4: Deploy Application to Google App Engine
-      - name: Deploy to Google App Engine
-        run: |
-          gcloud app deploy app.yaml --quiet
+      
