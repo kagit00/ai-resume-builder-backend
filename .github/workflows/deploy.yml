@@ -52,11 +52,8 @@ jobs:
           export GROQ_API_KEY=$(gcloud secrets versions access latest --secret="GROQ_API_KEY")
           export MAIL_ID=$(gcloud secrets versions access latest --secret="MAIL_ID")
           export MAIL_PASSKEY=$(gcloud secrets versions access latest --secret="MAIL_PASSKEY")
-    
-      # Step 3: Prepare app.yaml for deployment
-      - name: Prepare app.yaml
-        run: |
-          # Replace placeholders with environment variables
+
+          # Proceed with replacing the placeholders
           sed -i "s|SPRING_DATASOURCE_URL_PLACEHOLDER|$SPRING_DATASOURCE_URL|" app.yaml
           sed -i "s|SPRING_DATASOURCE_USERNAME_PLACEHOLDER|$SPRING_DATASOURCE_USERNAME|" app.yaml
           sed -i "s|SPRING_DATASOURCE_PASSWORD_PLACEHOLDER|$SPRING_DATASOURCE_PASSWORD|" app.yaml
@@ -69,8 +66,8 @@ jobs:
           sed -i "s|GROQ_API_KEY_PLACEHOLDER|$GROQ_API_KEY|" app.yaml
           sed -i "s|MAIL_ID_PLACEHOLDER|$MAIL_ID|" app.yaml
           sed -i "s|MAIL_PASSKEY_PLACEHOLDER|$MAIL_PASSKEY|" app.yaml
-    
-      # Step 4: Deploy Application to Google App Engine
+
+      # Deploy
       - name: Deploy to Google App Engine
         run: |
           gcloud app deploy app.yaml --quiet
