@@ -17,9 +17,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      UI_DOMAIN_URI: ${{ secrets.UI_DOMAIN_URI }}
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
 
     steps:
       # Step 1: Check out the code
@@ -52,9 +49,11 @@ jobs:
           export GROQ_API_KEY=$(gcloud secrets versions access latest --secret="GROQ_API_KEY")
           export MAIL_ID=$(gcloud secrets versions access latest --secret="MAIL_ID")
           export MAIL_PASSKEY=$(gcloud secrets versions access latest --secret="MAIL_PASSKEY")
+          export UI_DOMAIN_URI=$(gcloud secrets versions access latest --secret="UI_DOMAIN_URI")
+          export OAUTH2_REDIRECT_URI=$(gcloud secrets versions access latest --secret="OAUTH2_REDIRECT_URI")
 
           # Proceed with replacing the placeholders
-          sed -i "s|SPRING_DATASOURCE_URL_PLACEHOLDER|$SPRING_DATASOURCE_URL|" app.yaml
+          sed -i "s|SPRING_DATASOURCE_URL_PLACEHOLDER|${SPRING_DATASOURCE_URL//&/\\&}|" app.yaml
           sed -i "s|SPRING_DATASOURCE_USERNAME_PLACEHOLDER|$SPRING_DATASOURCE_USERNAME|" app.yaml
           sed -i "s|SPRING_DATASOURCE_PASSWORD_PLACEHOLDER|$SPRING_DATASOURCE_PASSWORD|" app.yaml
           sed -i "s|OAUTH2_CLIENT_ID_PLACEHOLDER|$OAUTH2_CLIENT_ID|" app.yaml
@@ -66,8 +65,5 @@ jobs:
           sed -i "s|GROQ_API_KEY_PLACEHOLDER|$GROQ_API_KEY|" app.yaml
           sed -i "s|MAIL_ID_PLACEHOLDER|$MAIL_ID|" app.yaml
           sed -i "s|MAIL_PASSKEY_PLACEHOLDER|$MAIL_PASSKEY|" app.yaml
-
-      # Deploy
-      - name: Deploy to Google App Engine
-        run: |
-          gcloud app deploy app.yaml --quiet
+          sed -i "s|UI_DOMAIN_URI_PLACEHOLDER|$UI_DOMAIN_URI|" app.yaml
+          sed -i "s|OAUTH2_REDIRECT_URI_PLACEHOLDER|$OAUTH2_REDIRECT_URI|" app.yaml
