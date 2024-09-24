@@ -57,18 +57,18 @@ jobs:
       - name: Prepare app.yaml
         run: |
           # Replace placeholders with environment variables
-          sed -i "s/SPRING_DATASOURCE_URL_PLACEHOLDER/$SPRING_DATASOURCE_URL/" app.yaml
-          sed -i "s/SPRING_DATASOURCE_USERNAME_PLACEHOLDER/$SPRING_DATASOURCE_USERNAME/" app.yaml
-          sed -i "s/SPRING_DATASOURCE_PASSWORD_PLACEHOLDER/$SPRING_DATASOURCE_PASSWORD/" app.yaml
-          sed -i "s/OAUTH2_CLIENT_ID_PLACEHOLDER/$OAUTH2_CLIENT_ID/" app.yaml
-          sed -i "s/OAUTH2_CLIENT_SECRET_PLACEHOLDER/$OAUTH2_CLIENT_SECRET/" app.yaml
-          sed -i "s/BRAINTREE_MERCHANT_ID_PLACEHOLDER/$BRAINTREE_MERCHANT_ID/" app.yaml
-          sed -i "s/BRAINTREE_PUBLIC_KEY_PLACEHOLDER/$BRAINTREE_PUBLIC_KEY/" app.yaml
-          sed -i "s/BRAINTREE_PRIVATE_KEY_PLACEHOLDER/$BRAINTREE_PRIVATE_KEY/" app.yaml
-          sed -i "s/OCR_API_KEY_PLACEHOLDER/$OCR_API_KEY/" app.yaml
-          sed -i "s/GROQ_API_KEY_PLACEHOLDER/$GROQ_API_KEY/" app.yaml
-          sed -i "s/MAIL_ID_PLACEHOLDER/$MAIL_ID/" app.yaml
-          sed -i "s/MAIL_PASSKEY_PLACEHOLDER/$MAIL_PASSKEY/" app.yaml
+          sed -i "s|SPRING_DATASOURCE_URL_PLACEHOLDER|$SPRING_DATASOURCE_URL|" app.yaml
+          sed -i "s|SPRING_DATASOURCE_USERNAME_PLACEHOLDER|$SPRING_DATASOURCE_USERNAME|" app.yaml
+          sed -i "s|SPRING_DATASOURCE_PASSWORD_PLACEHOLDER|$SPRING_DATASOURCE_PASSWORD|" app.yaml
+          sed -i "s|OAUTH2_CLIENT_ID_PLACEHOLDER|$OAUTH2_CLIENT_ID|" app.yaml
+          sed -i "s|OAUTH2_CLIENT_SECRET_PLACEHOLDER|$OAUTH2_CLIENT_SECRET|" app.yaml
+          sed -i "s|BRAINTREE_MERCHANT_ID_PLACEHOLDER|$BRAINTREE_MERCHANT_ID|" app.yaml
+          sed -i "s|BRAINTREE_PUBLIC_KEY_PLACEHOLDER|$BRAINTREE_PUBLIC_KEY|" app.yaml
+          sed -i "s|BRAINTREE_PRIVATE_KEY_PLACEHOLDER|$BRAINTREE_PRIVATE_KEY|" app.yaml
+          sed -i "s|OCR_API_KEY_PLACEHOLDER|$OCR_API_KEY|" app.yaml
+          sed -i "s|GROQ_API_KEY_PLACEHOLDER|$GROQ_API_KEY|" app.yaml
+          sed -i "s|MAIL_ID_PLACEHOLDER|$MAIL_ID|" app.yaml
+          sed -i "s|MAIL_PASSKEY_PLACEHOLDER|$MAIL_PASSKEY|" app.yaml
     
       # Step 4: Deploy Application to Google App Engine
       - name: Deploy to Google App Engine
