@@ -53,20 +53,6 @@ jobs:
           export MAIL_ID=$(gcloud secrets versions access latest --secret="MAIL_ID")
           export MAIL_PASSKEY=$(gcloud secrets versions access latest --secret="MAIL_PASSKEY")
 
-          # Debugging: Print the values to verify they are fetched correctly
-          echo "SPRING_DATASOURCE_URL: $SPRING_DATASOURCE_URL"
-          echo "SPRING_DATASOURCE_USERNAME: $SPRING_DATASOURCE_USERNAME"
-          echo "SPRING_DATASOURCE_PASSWORD: $SPRING_DATASOURCE_PASSWORD"
-          echo "OAUTH2_CLIENT_ID: $OAUTH2_CLIENT_ID"
-          echo "OAUTH2_CLIENT_SECRET: $OAUTH2_CLIENT_SECRET"
-          echo "BRAINTREE_MERCHANT_ID: $BRAINTREE_MERCHANT_ID"
-          echo "BRAINTREE_PUBLIC_KEY: $BRAINTREE_PUBLIC_KEY"
-          echo "BRAINTREE_PRIVATE_KEY: $BRAINTREE_PRIVATE_KEY"
-          echo "OCR_API_KEY: $OCR_API_KEY"
-          echo "GROQ_API_KEY: $GROQ_API_KEY"
-          echo "MAIL_ID: $MAIL_ID"
-          echo "MAIL_PASSKEY: $MAIL_PASSKEY"
-
           # Proceed with replacing the placeholders
           sed -i "s|SPRING_DATASOURCE_URL_PLACEHOLDER|$SPRING_DATASOURCE_URL|" app.yaml
           sed -i "s|SPRING_DATASOURCE_USERNAME_PLACEHOLDER|$SPRING_DATASOURCE_USERNAME|" app.yaml
