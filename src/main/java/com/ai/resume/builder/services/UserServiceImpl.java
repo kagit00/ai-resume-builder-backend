@@ -80,6 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "userCache", allEntries = true)
     public void updateNotificationEnabled(Notification notification) {
         boolean isNotificationEnabled = notification.getIsNotificationEnabled();
         long userId = notification.getUserId();

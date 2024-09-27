@@ -1,6 +1,7 @@
 package com.ai.resume.builder.controllers;
 
-import com.ai.resume.builder.models.ResumeSummary;
+import com.ai.resume.builder.dto.ResumeSummaryRequest;
+import com.ai.resume.builder.dto.ResumeSummaryResponse;
 import com.ai.resume.builder.services.ResumeSummaryServiceImplementation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,21 +20,21 @@ public class SummaryController {
 
     @Transactional
     @PostMapping(value = "/{resumeId}/summary", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResumeSummary > saveResumeSummary(@RequestBody ResumeSummary resumeSummary, @PathVariable("resumeId") String resumeId) {
-        resumeSummaryServiceImplementation.saveResumeSummary(resumeSummary, UUID.fromString(resumeId));
+    public ResponseEntity<Object> saveResumeSummary(@RequestBody ResumeSummaryRequest resumeSummaryRequest, @PathVariable("resumeId") String resumeId) {
+        resumeSummaryServiceImplementation.saveResumeSummary(resumeSummaryRequest, UUID.fromString(resumeId));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Transactional
     @GetMapping(value = "/{resumeId}/summary", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResumeSummary> getResumeSummary(@PathVariable("resumeId") String resumeId) {
+    public ResponseEntity<ResumeSummaryResponse> getResumeSummary(@PathVariable("resumeId") String resumeId) {
         return new ResponseEntity<>(resumeSummaryServiceImplementation.getSummary(UUID.fromString(resumeId)), HttpStatus.OK);
     }
 
     @Transactional
     @PutMapping(value = "/{resumeId}/summary", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateResumeSummary(@RequestBody ResumeSummary resumeSummary, @PathVariable("resumeId") String resumeId) {
-        resumeSummaryServiceImplementation.updateResume(resumeSummary, UUID.fromString(resumeId));
+    public ResponseEntity<Object> updateResumeSummary(@RequestBody ResumeSummaryRequest resumeSummaryRequest, @PathVariable("resumeId") String resumeId) {
+        resumeSummaryServiceImplementation.updateResume(resumeSummaryRequest, UUID.fromString(resumeId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

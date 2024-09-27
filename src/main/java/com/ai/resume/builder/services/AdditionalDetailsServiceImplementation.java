@@ -1,15 +1,16 @@
 package com.ai.resume.builder.services;
 
 import com.ai.resume.builder.cache.Cache;
-import com.ai.resume.builder.exceptions.InternalServerErrorException;
+import com.ai.resume.builder.exceptions.BadRequestException;
 import com.ai.resume.builder.models.AdditionalDetails;
+import com.ai.resume.builder.dto.AdditionalDetailsRequest;
+import com.ai.resume.builder.dto.AdditionalDetailsResponse;
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.repository.AdditionalDetailsRepository;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,48 +27,74 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
 
     @Override
     @CachePut(value = "additionalDetailsCache", key = "#resumeId", unless = "#result == null")
-    public AdditionalDetails saveAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId) {
-        if (Objects.isNull(additionalDetails))
-            throw new InternalServerErrorException("Additional Details Should've Valid Value");
+    public AdditionalDetailsResponse saveAdditionalDetails(AdditionalDetailsRequest additionalDetailsRequest, UUID resumeId) {
+        if (Objects.isNull(additionalDetailsRequest)) throw new BadRequestException("Additional Details Should've Valid Value");
 
-        if (Objects.isNull(resumeId))
-            throw new InternalServerErrorException("Resume Id is Not Valid");
+        if (Objects.isNull(resumeId)) throw new BadRequestException("Resume Id is Not Valid");
 
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
-        additionalDetails.setResume(resume);
+        AdditionalDetails additionalDetails = AdditionalDetails.builder()
+                .githubLink(additionalDetailsRequest.getGithubLink())
+                .phoneNumber(additionalDetailsRequest.getPhoneNumber())
+                .linkedInProfileLink(additionalDetailsRequest.getLinkedInProfileLink())
+                .resume(resume)
+                .build();
+
         resume.setAdditionalDetails(additionalDetails);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
 
         additionalDetailsRepository.save(additionalDetails);
         resumeRepository.save(resume);
-        return additionalDetails;
+
+        return AdditionalDetailsResponse.builder()
+                .id(additionalDetails.getId())
+                .githubLink(additionalDetails.getGithubLink())
+                .phoneNumber(additionalDetails.getPhoneNumber())
+                .linkedInProfileLink(additionalDetails.getLinkedInProfileLink())
+                .build();
     }
 
     @Override
     @Cacheable(value = "additionalDetailsCache", key = "#resumeId")
-    public AdditionalDetails getAdditionalDetails(UUID resumeId) {
+    public AdditionalDetailsResponse getAdditionalDetails(UUID resumeId) {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
-        return additionalDetailsRepository.findByResume(resume);
+        AdditionalDetails additionalDetails = additionalDetailsRepository.findByResume(resume);
+
+        if (Objects.isNull(additionalDetails)) return null;
+
+        return AdditionalDetailsResponse.builder()
+                .id(additionalDetails.getId())
+                .githubLink(additionalDetails.getGithubLink())
+                .phoneNumber(additionalDetails.getPhoneNumber())
+                .linkedInProfileLink(additionalDetails.getLinkedInProfileLink())
+                .build();
     }
 
     @Override
     @CacheEvict(value = "additionalDetailsCache", allEntries = true)
-    public AdditionalDetails updateAdditionalDetails(AdditionalDetails additionalDetails, UUID resumeId, UUID additionalDetailsId) {
+    public AdditionalDetailsResponse updateAdditionalDetails(AdditionalDetailsRequest additionalDetailsRequest, UUID resumeId, UUID additionalDetailsId) {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
+        AdditionalDetails additionalDetails = additionalDetailsRepository.findByResume(resume);
 
-        AdditionalDetails ad = additionalDetailsRepository.findByResume(resume);
+        if (Objects.isNull(additionalDetails)) return null;
 
-        ad.setGithubLink(additionalDetails.getGithubLink());
-        ad.setPhoneNumber(additionalDetails.getPhoneNumber());
-        ad.setLinkedInProfileLink(additionalDetails.getLinkedInProfileLink());
-        ad.setResume(resume);
+        additionalDetails.setGithubLink(additionalDetailsRequest.getGithubLink());
+        additionalDetails.setPhoneNumber(additionalDetailsRequest.getPhoneNumber());
+        additionalDetails.setLinkedInProfileLink(additionalDetailsRequest.getLinkedInProfileLink());
+        additionalDetails.setResume(resume);
 
-        resume.setAdditionalDetails(ad);
+        resume.setAdditionalDetails(additionalDetails);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
 
-        additionalDetailsRepository.save(ad);
+        additionalDetailsRepository.save(additionalDetails);
         resumeRepository.save(resume);
-        return ad;
+
+        return AdditionalDetailsResponse.builder()
+                .id(additionalDetails.getId())
+                .githubLink(additionalDetails.getGithubLink())
+                .phoneNumber(additionalDetails.getPhoneNumber())
+                .linkedInProfileLink(additionalDetails.getLinkedInProfileLink())
+                .build();
     }
 }

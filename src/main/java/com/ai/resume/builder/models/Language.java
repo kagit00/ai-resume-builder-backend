@@ -7,8 +7,8 @@ import lombok.*;
 import java.util.EnumSet;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

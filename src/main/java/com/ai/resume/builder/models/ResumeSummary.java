@@ -6,8 +6,8 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "resume_summary")

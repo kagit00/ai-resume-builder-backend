@@ -1,6 +1,8 @@
 package com.ai.resume.builder.services;
 
-import com.ai.resume.builder.exceptions.InternalServerErrorException;
+import com.ai.resume.builder.dto.ResumeSectionRequest;
+import com.ai.resume.builder.dto.ResumeSectionResponse;
+import com.ai.resume.builder.exceptions.BadRequestException;
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.ResumeSection;
 import com.ai.resume.builder.models.SectionType;
@@ -15,6 +17,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,50 +28,63 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
     @Override
     @CachePut(value = "resumeSectionCache", key = "#result.id",  unless = "#result == null")
     @CacheEvict(value = "resumeSectionsListCache", allEntries = true)
-    public ResumeSection saveResumeSection(ResumeSection resumeSection, UUID resumeId, String sectionType) {
-        if (Objects.isNull(resumeSection) || Objects.isNull(resumeId)) {
-            throw new InternalServerErrorException("Resume id or resume section is null");
-        }
+    public ResumeSectionResponse saveResumeSection(ResumeSectionRequest resumeSectionRequest, UUID resumeId, String sectionType) {
+        if (Objects.isNull(resumeSectionRequest) || Objects.isNull(resumeId)) throw new BadRequestException("Resume id or resume section is null");
 
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
-        resumeSection.setSectionType(SectionType.valueOf(sectionType));
-        resumeSection.setResume(resume);
-        resumeSectionsRepository.save(resumeSection);
+        ResumeSection resumeSection = ResumeSection.builder()
+                .title(resumeSectionRequest.getTitle()).organization(resumeSectionRequest.getOrganization())
+                .startDate(resumeSectionRequest.getStartDate()).endDate(resumeSectionRequest.getEndDate())
+                .description(resumeSectionRequest.getDescription()).location(resumeSectionRequest.getLocation())
+                .sectionType(SectionType.valueOf(sectionType)).resume(resume)
+                .build();
 
+        resumeSectionsRepository.save(resumeSection);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
         resume.getResumeSections().add(resumeSection);
         resumeRepository.save(resume);
-        return resumeSection;
+
+        return ResumeSectionResponse.builder()
+                .id(resumeSection.getId()).title(resumeSection.getTitle()).organization(resumeSection.getOrganization())
+                .startDate(resumeSection.getStartDate()).endDate(resumeSection.getEndDate()).description(resumeSection.getDescription())
+                .location(resumeSection.getLocation()).sectionType(resumeSection.getSectionType().name())
+                .build();
     }
 
     @Override
     @Cacheable(value = "resumeSectionsListCache", key = "#resumeId + '_' + #sectionType")
-    public List<ResumeSection> getResumeSections(UUID resumeId, String sectionType) {
+    public List<ResumeSectionResponse> getResumeSections(UUID resumeId, String sectionType) {
+        List<ResumeSection> resumeSections = new ArrayList<>();
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         if (SectionType.EDUCATION.name().toLowerCase().equals(sectionType))
-            return resumeSectionsRepository.findByResumeAndSectionType(resume, SectionType.EDUCATION);
+            resumeSections =  resumeSectionsRepository.findByResumeAndSectionType(resume, SectionType.EDUCATION);
 
         if (SectionType.EXPERIENCE.name().toLowerCase().equals(sectionType))
-            return resumeSectionsRepository.findByResumeAndSectionType(resume, SectionType.EXPERIENCE);
+            resumeSections = resumeSectionsRepository.findByResumeAndSectionType(resume, SectionType.EXPERIENCE);
 
         if (SectionType.PROJECT.name().toLowerCase().equals(sectionType))
-            return resumeSectionsRepository.findByResumeAndSectionType(resume, SectionType.PROJECT);
+            resumeSections = resumeSectionsRepository.findByResumeAndSectionType(resume, SectionType.PROJECT);
 
-        return resumeSectionsRepository.findByResume(resume);
+        return resumeSections.stream().map(section -> ResumeSectionResponse.builder()
+                        .id(section.getId()).title(section.getTitle()).organization(section.getOrganization())
+                        .startDate(section.getStartDate()).endDate(section.getEndDate()).description(section.getDescription())
+                        .location(section.getLocation()).sectionType(section.getSectionType().name())
+                        .build()).collect(Collectors.toList());
     }
 
     @Override
     @CacheEvict(value = {"resumeSectionCache", "resumeSectionsListCache"}, allEntries = true)
-    public void updateResumeSection(ResumeSection resumeSection, UUID resumeId, UUID resumeSectionId) {
+    public void updateResumeSection(ResumeSectionRequest resumeSectionRequest, UUID resumeId, UUID resumeSectionId) {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
-        ResumeSection rs = resumeSectionsRepository.findById(resumeSectionId).orElseThrow();
+        ResumeSection rs = resumeSectionsRepository.findById(resumeSectionId)
+                .orElseThrow(() -> new NoSuchElementException("Resume Section not found"));
 
-        rs.setLocation(resumeSection.getLocation());
-        rs.setDescription(resumeSection.getDescription());
-        rs.setOrganization(resumeSection.getOrganization());
-        rs.setEndDate(resumeSection.getEndDate());
-        rs.setStartDate(resumeSection.getStartDate());
+        rs.setLocation(resumeSectionRequest.getLocation());
+        rs.setDescription(resumeSectionRequest.getDescription());
+        rs.setOrganization(resumeSectionRequest.getOrganization());
+        rs.setEndDate(resumeSectionRequest.getEndDate());
+        rs.setStartDate(resumeSectionRequest.getStartDate());
         rs.setResume(resume);
 
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());

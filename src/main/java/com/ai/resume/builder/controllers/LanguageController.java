@@ -1,5 +1,7 @@
 package com.ai.resume.builder.controllers;
 
+import com.ai.resume.builder.dto.LanguageRequest;
+import com.ai.resume.builder.dto.LanguageResponse;
 import com.ai.resume.builder.models.Language;
 import com.ai.resume.builder.services.LanguageServiceImplementation;
 import jakarta.validation.Valid;
@@ -20,27 +22,49 @@ public class LanguageController {
     private final LanguageServiceImplementation languageServiceImplementation;
 
     @Transactional
-    @PostMapping(value = "/{resumeId}/language", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Language> saveLanguage(@PathVariable("resumeId") String resumeId, @RequestBody @Valid Language language) {
-        return new ResponseEntity<>(this.languageServiceImplementation.saveLanguage(UUID.fromString(resumeId), language), HttpStatus.CREATED);
+    @PostMapping(
+            value = "/{resumeId}/language",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<LanguageResponse> saveLanguage(
+            @PathVariable("resumeId") String resumeId,
+            @RequestBody @Valid LanguageRequest languageRequest) {
+
+        return new ResponseEntity<>(
+                this.languageServiceImplementation.saveLanguage(UUID.fromString(resumeId), languageRequest),
+                HttpStatus.CREATED
+        );
     }
 
     @Transactional
     @GetMapping(value = "/{resumeId}/language", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Language>> getLanguages(@PathVariable("resumeId") String resumeId) {
+    public ResponseEntity<List<LanguageResponse>> getLanguages(@PathVariable("resumeId") String resumeId) {
         return new ResponseEntity<>(this.languageServiceImplementation.getLanguages(UUID.fromString(resumeId)), HttpStatus.OK);
     }
 
     @Transactional
-    @PutMapping(value = "/{resumeId}/language/{languageId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateLanguage(@PathVariable("resumeId") String resumeId, @PathVariable("languageId") String languageId, @RequestBody @Valid Language language) {
-        this.languageServiceImplementation.updateLanguage(UUID.fromString(resumeId), UUID.fromString(languageId), language);
+    @PutMapping(
+            value = "/{resumeId}/language/{languageId}",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Object> updateLanguage(
+            @PathVariable("resumeId") String resumeId,
+            @PathVariable("languageId") String languageId,
+            @RequestBody @Valid LanguageRequest languageRequest) {
+
+        this.languageServiceImplementation.updateLanguage(UUID.fromString(resumeId), UUID.fromString(languageId), languageRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Transactional
     @DeleteMapping(value = "/{resumeId}/language/{languageId}")
-    public ResponseEntity<Object> deleteLanguage(@PathVariable("resumeId") String resumeId, @PathVariable("languageId") String languageId) {
+    public ResponseEntity<Object> deleteLanguage(
+            @PathVariable("resumeId") String resumeId,
+            @PathVariable("languageId") String languageId
+    ) {
+
         this.languageServiceImplementation.deleteLanguage(UUID.fromString(resumeId), UUID.fromString(languageId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
