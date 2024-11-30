@@ -1,6 +1,7 @@
 package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
+import com.ai.resume.builder.services.EmailService;
 import com.ai.resume.builder.services.EmailServiceImplementation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class EmailController {
     @Value("${ui.domain.uri}")
     private String uiDomainUri;
-    private final EmailServiceImplementation emailService;
+    private final EmailService emailService;
 
     public EmailController(EmailServiceImplementation emailService) {
         this.emailService = emailService;

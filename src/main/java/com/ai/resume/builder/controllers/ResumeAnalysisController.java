@@ -2,6 +2,7 @@ package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.ResumeAnalysisResult;
+import com.ai.resume.builder.services.ResumeAnalysisService;
 import com.ai.resume.builder.services.ResumeAnalysisServiceImplementation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -16,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/resume/analysis")
 @AllArgsConstructor
 public class ResumeAnalysisController {
-    private final ResumeAnalysisServiceImplementation resumeAnalysisService;
+    private final ResumeAnalysisService resumeAnalysisService;
 
     @PostMapping(value = "/upload-and-analyze", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadAndAnalyzeResume(@RequestParam("file") MultipartFile file, @RequestParam("jobDescription") String jobDescription) {

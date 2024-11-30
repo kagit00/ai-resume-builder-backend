@@ -20,8 +20,8 @@ public final class HeadersUtility {
     public static String extractRequestHeaders(HttpServletRequest request) {
         StringBuilder req = new StringBuilder("Headers: ");
         Collections.list(request.getHeaderNames()).forEach(headerName ->
-                req.append(headerName)
-                        .append(": ").append(request.getHeader(headerName)).append("\n"));
+                req.append(headerName).append(": ").append(request.getHeader(headerName)).append("\n"));
+
         return req.toString();
     }
 
@@ -34,11 +34,12 @@ public final class HeadersUtility {
     public static String extractResponseHeaders(HttpServletResponse response) {
         StringBuilder headers = new StringBuilder("Headers: ");
         Enumeration<String> headerNames = Collections.enumeration(response.getHeaderNames());
+
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
-            headers.append(headerName)
-                    .append(": ").append(response.getHeader(headerName)).append("\n");
+            headers.append(headerName).append(": ").append(response.getHeader(headerName)).append("\n");
         }
+
         return headers.toString();
     }
 }

@@ -2,6 +2,7 @@ package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.BraintreeClientToken;
 import com.ai.resume.builder.models.CheckoutRequest;
+import com.ai.resume.builder.services.SubscriptionService;
 import com.ai.resume.builder.services.SubscriptionServiceImplementation;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user/subscription")
 public class SubscriptionController {
-    private final SubscriptionServiceImplementation subscriptionService;
+    private final SubscriptionService subscriptionService;
 
     @Transactional
     @GetMapping(value = "/client-token", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -27,6 +28,6 @@ public class SubscriptionController {
     @Transactional
     @PostMapping(value = "/checkout/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Result<Transaction>> subscribe(@PathVariable("userId") long userId, @RequestBody CheckoutRequest checkoutRequest) {
-        return new ResponseEntity<>(this.subscriptionService.subscribe(checkoutRequest, userId), HttpStatus.OK);
+        return new ResponseEntity<>(subscriptionService.subscribe(checkoutRequest, userId), HttpStatus.OK);
     }
 }

@@ -4,7 +4,7 @@ import com.ai.resume.builder.models.NoContent;
 import com.ai.resume.builder.models.Notification;
 import com.ai.resume.builder.models.PasswordDTO;
 import com.ai.resume.builder.models.User;
-import com.ai.resume.builder.services.UserServiceImpl;
+import com.ai.resume.builder.services.UserService;
 import com.ai.resume.builder.validation.ValidPassword;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     /**
      * Register user response entity.

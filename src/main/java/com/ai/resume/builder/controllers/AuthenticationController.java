@@ -42,6 +42,6 @@ public class AuthenticationController {
     @Transactional
     @GetMapping(value = "/current-user", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> getPrincipal(Principal principal) {
-        return new ResponseEntity<>(this.authenticationService.getPrincipal(principal.getName()), HttpStatus.OK);
+        return new ResponseEntity<>(authenticationService.getPrincipal(principal.getName()), HttpStatus.OK);
     }
 }
