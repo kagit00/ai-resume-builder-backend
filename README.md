@@ -1,5 +1,16 @@
-# Project Title
-**AI Resume Builder**
+# Project Title & Live Link
+**AI Resume Builder** | Domain Link: https://ai-resume-builder-443308.uc.r.appspot.com
+
+
+
+## Table of Contents
+- [Description](#description)
+- [Installation](#install--run)
+- [Configuration](#configuration)
+- [API Documentation](#api-documentation)
+- [Features](#features)
+- [Contributing](#contributing)
+- [Testing](#testing)
 
 
 
@@ -10,23 +21,8 @@ and keyword optimization, increasing the likelihood of landing job interviews.
 
 
 
-
-## Table of Contents
-- [Description](#description)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [API Documentation](#api-documentation)
-- [Features](#features)
-- [Contributing](#contributing)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [License](#license)
-
-
-
 ## Install & Run
-1. **Pre-requisites**: List the tools required (e.g., Java8 , ReactJS, HTML, CSS, Vite, Hibernate, GROQ AI, OCR Space,
+1. **Pre-requisites**: List the tools required (e.g., Java17 , Spring Boot, Spring Security, Log4j, XML, Hibernate, GROQ AI, OCR Space,
    Caffeine Caching, Postgres, Braintree, Git, GitHub CI/CD, GCP).
 2. **Clone the repository**: 
    ```bash
@@ -39,7 +35,7 @@ and keyword optimization, increasing the likelihood of landing job interviews.
 
 ### Configuration
 - Currently, this project has been deployed using Google App Engine (GAE). The potential passkeys come from GCP Secret Manager. 
-- These Passkeys mostly consist of Groq API Key, OCR API Key, oAuth2 Regn Client Id, oAuth2 Regn. Client Secret, Postgres Database user creds ets.
+- These Passkeys mostly consist of Groq API Key, OCR API Key, oAuth2 Regn Client Id, oAuth2 Regn. Client Secret, Postgres Database creds etc.
 - Few of the passkeys (e.g. Oauth Redirect Uri, GCP secret key, Project Id, etc.) comes from GitHub Secret Manager.
 - Below is the application.properties sample for production environment. where the values for (secrets, passkeys or password or key) get resolved from app.yml using CI/CD workflow.
 - And values in app.yaml get resolved from google secret manager.
@@ -171,15 +167,13 @@ To run the unit tests using Maven:
 
 ## Features
 
-- **RESTful API**: A well-designed REST API to interact with your application.
-- **User Authentication**: Supports login and registration with JWT-based authentication.
-- **Database Integration**: Uses MySQL/PostgreSQL (or any other database) for data storage.
-- **API Documentation**: Automatic API documentation with Swagger UI, available at `/swagger-ui/index.html`.
-- **CRUD Operations**: Implements Create, Read, Update, Delete functionality for core resources.
-- **Error Handling**: Custom error handling with meaningful error messages and status codes.
-- **Logging**: Integrated with SLF4J and Logback for logging API requests and application events.
-- **Environment Configuration**: Supports configuration via `.properties` or `.yml` files for database credentials and environment variables.
-- **Unit and Integration Tests**: Comes with pre-configured test classes to ensure the reliability of the application.
+- ****: A well-designed REST API to interact with your application.
+- **User Authentication**: Supports login and registration with JWT-based authentication and oauth2 based authentication (as of now google only). As future scope, I will be integrating github and facebook client as well for ease of access.
+- **User Authorization**: As of now, users' activities are categorised into two roles (e.g. Free User, Premium User). Free User can perform basic operations only like resume creation, profile viewing, etc but they can't download their resumes as well as are not allowed to analyse resumes against job description. On the other hand, Premium User can access all the features including the basic ones.
+- **Payment Integration**: In order to be premium user, user needs to pay 20 rupees. And it's a lifetime access to the resources. For Payment integration, braintree has been used.
+- **AI Completion**: During resume creation process, AI tool like GROQ AI has been put in place to assist user in writing content for their resumes. Currently, they can take leverage of it to write projec, experience and summary sections. 
+- **Download & Share Resume**: Only Premium users can download and share resumes in PDF format.
+- **Resume Analysis**: Only Premium users can analyse their resume against job description. For now, it just tells how many matching and un-matching keywords are there in the resume considering the JD. In future enhancement, ATS score, nlp etc will be used for more granular analysis.
 
 
 
@@ -196,7 +190,7 @@ We welcome contributions from the community. Please follow the steps below to co
 2. **Clone the Forked Repository**:
    - Clone your fork to your local machine using:
      ```bash
-     git clone https://github.com/your-username/your-repo-name.git
+     git clone https://github.com/kagit00/ai-resume-builder-backend.git
      ```
    
 3. **Create a New Branch**:
