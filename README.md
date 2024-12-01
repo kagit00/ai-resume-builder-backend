@@ -63,10 +63,8 @@ Ensure that you have the following tools installed to run the tests:
 Unit tests are located in the `src/test/java` directory and are executed using JUnit.
 
 To run the unit tests using Maven:
-
-```bash
-mvn test
-
+      ```bash
+      mvn test
 
 ## Features
 
