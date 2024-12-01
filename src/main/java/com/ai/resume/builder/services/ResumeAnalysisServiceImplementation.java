@@ -22,6 +22,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 @Service
@@ -101,13 +102,31 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
 
     private File savePdfFile(MultipartFile file) {
         try {
-            File tempFile = File.createTempFile("uploaded", ".pdf");
+            // Validate the file before saving
+            if (!isValidPdf(file)) {
+                throw new BadRequestException("Invalid file type. Only PDF files are allowed.");
+            }
+
+            // Create temp directory if it doesn't exist
+            File tempDir = new File(System.getProperty("java.io.tmpdir"), "appUploads");
+            if (!tempDir.exists()) {
+                tempDir.mkdirs();
+            }
+
+            // Ensure the directory is valid
+            if (!isValidPath(tempDir)) {
+                throw new InternalServerErrorException("Invalid temporary directory path.");
+            }
+
+            // Save the file to a controlled directory
+            File tempFile = new File(tempDir, "uploaded_" + System.currentTimeMillis() + ".pdf");
             file.transferTo(tempFile);
             return tempFile;
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }
     }
+
 
     // OCR on PDF directly
     private String performOcrOnPdf(File pdfFile) {
@@ -221,6 +240,24 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }
+    }
+
+    private boolean isValidPath(File file) {
+        try {
+            Path filePath = file.toPath().normalize();
+            Path tempDir = new File(System.getProperty("java.io.tmpdir"), "appUploads").toPath().normalize();
+
+            // Ensure that the file is saved inside the designated temporary directory
+            return filePath.startsWith(tempDir) && Files.isWritable(tempDir);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean isValidPdf(MultipartFile file) {
+        String contentType = file.getContentType();
+        // Check if the file is of type PDF (optional: add other checks like file signatures)
+        return "application/pdf".equals(contentType);
     }
 
 }

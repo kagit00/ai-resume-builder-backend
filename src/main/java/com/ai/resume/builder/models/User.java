@@ -82,6 +82,11 @@ public class User implements UserDetails, Serializable {
         return true;
     }
 
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
     public boolean hasRole(String roleName) {
         return roles.stream()
                 .anyMatch(userRole -> userRole.getRole().getRoleName().equalsIgnoreCase(roleName));
