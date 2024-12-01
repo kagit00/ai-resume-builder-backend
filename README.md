@@ -4,10 +4,14 @@
 
 ---
 
+
+
 ## Description
 [Explain what the project does, its purpose, and key features. Highlight the technologies used and the problem it solves.]
 
 ---
+
+
 
 ## Table of Contents
 - [Description](#description)
@@ -33,6 +37,8 @@
    mvn spring-boot:run
 
 
+
+
 ### Configuration
 [Describe how to configure the project.]
 
@@ -43,6 +49,9 @@
    spring.datasource.url=jdbc:mysql://localhost:3306/your_database
    spring.datasource.username=your_username
    spring.datasource.password=your_password
+
+
+
 
 
 ## Testing
@@ -66,6 +75,9 @@ To run the unit tests using Maven:
       ```bash
       mvn test
 
+
+
+
 ## Features
 
 - **RESTful API**: A well-designed REST API to interact with your application.
@@ -77,6 +89,8 @@ To run the unit tests using Maven:
 - **Logging**: Integrated with SLF4J and Logback for logging API requests and application events.
 - **Environment Configuration**: Supports configuration via `.properties` or `.yml` files for database credentials and environment variables.
 - **Unit and Integration Tests**: Comes with pre-configured test classes to ensure the reliability of the application.
+
+
 
 
 ## Contributing
