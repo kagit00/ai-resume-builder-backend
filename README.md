@@ -179,7 +179,7 @@ To run the unit tests using Maven:
 
 ## Contributing
 
-We welcome contributions from the community. Please follow the steps below to contribute to this project:
+I welcome contributions from the community. Please follow the steps below to contribute to this project:
 
 ### Steps to Contribute
 
