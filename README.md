@@ -1,15 +1,13 @@
 # Project Title
-[Your project name]  
-[Short description or tagline summarizing the project.]
-
----
+**AI Resume Builder**
 
 
 
 ## Description
-[Explain what the project does, its purpose, and key features. Highlight the technologies used and the problem it solves.]
+The Al Resume Builder is a cutting-edge tool that uses advanced artificial intelligence algorithms to help job seekers create powerful
+and effective resumes. It analyzes user input and provides personalized recommendations for improving resume content, formatting,
+and keyword optimization, increasing the likelihood of landing job interviews.
 
----
 
 
 
@@ -25,32 +23,125 @@
 - [Deployment](#deployment)
 - [License](#license)
 
----
+
 
 ## Install & Run
-[Step-by-step guide for setting up the project locally.]
-1. **Pre-requisites**: List the tools required (e.g., Java version, Maven, database).
+1. **Pre-requisites**: List the tools required (e.g., Java8 , ReactJS, HTML, CSS, Vite, Hibernate, GROQ AI, OCR Space,
+   Caffeine Caching, Postgres, Braintree, Git, GitHub CI/CD, GCP).
 2. **Clone the repository**: 
    ```bash
-   git clone https://github.com/your-username/your-repository.git
-   cd your-project
+   git clone https://github.com/kagit00/ai-resume-builder-backend.git
+   cd ai-resume-builder-backend
    mvn spring-boot:run
 
 
 
 
 ### Configuration
-[Describe how to configure the project.]
-
-- Explain where to set environment variables, database credentials, or secrets.
-- Provide an example of a `application.yml` or `.env` file:
+- Currently, this project has been deployed using Google App Engine (GAE). The potential passkeys come from GCP Secret Manager. 
+- These Passkeys mostly consist of Groq API Key, OCR API Key, oAuth2 Regn Client Id, oAuth2 Regn. Client Secret, Postgres Database user creds ets.
+- Few of the passkeys (e.g. Oauth Redirect Uri, GCP secret key, Project Id, etc.) comes from GitHub Secret Manager.
+- Below is the application.properties sample for production environment. where the values for (secrets, passkeys or password or key) get resolved from app.yml using CI/CD workflow.
+- And values in app.yaml get resolved from google secret manager.
 
    ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/your_database
-   spring.datasource.username=your_username
-   spring.datasource.password=your_password
+    #DB Config
+    spring.datasource.driver-class-name=org.postgresql.Driver
+    spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+    spring.jpa.hibernate.ddl-auto=update
+    
+    ui.domain.uri=${UI_DOMAIN_URI}
+    
+    # Google OAuth2 Configuration
+    spring.security.oauth2.client.registration.google.client-id=${OAUTH2_CLIENT_ID}
+    spring.security.oauth2.client.registration.google.client-secret=${OAUTH2_CLIENT_SECRET}
+    spring.security.oauth2.client.registration.google.redirect-uri=${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI}
+    spring.security.oauth2.client.registration.google.scope=profile,email
+
+    #Mail Config
+    spring.mail.host=smtp.gmail.com
+    spring.mail.port=587
+    spring.mail.properties.mail.smtp.auth=true
+    spring.mail.properties.mail.smtp.starttls.enable=true
+    spring.mail.properties.mail.smtp.starttls.required=true
+    spring.mail.properties.mail.smtp.connectiontimeout=5000
+    spring.mail.properties.mail.smtp.timeout=5000
+    spring.mail.properties.mail.smtp.writetimeout=5000
 
 
+    spring.datasource.url=${SPRING_DATASOURCE_URL}
+    spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
+    spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+    
+    # Hibernate properties
+    spring.jpa.show-sql=false
+    spring.jpa.properties.hibernate.default_schema=public
+    
+    # SMTP Server Configuration for Gmail
+    spring.mail.username=${SPRING_MAIL_USERNAME}
+    spring.mail.password=${SPRING_MAIL_PASSWORD}
+
+    #braintree creds
+    braintree.sandbox.merchant-id=${BRAINTREE_MERCHANT_ID}
+    braintree.sandbox.public-key=${BRAINTREE_PUBLIC_KEY}
+    braintree.sandbox.private-key=${BRAINTREE_PRIVATE_KEY}
+    
+    #OCR Space
+    ocr.api.url=https://api.ocr.space/parse/image
+    ocr.api.key="${OCR_API_KEY}"
+    
+    #groq
+    groq.api.url=https://api.groq.com/openai/v1/chat/completions
+    groq.api.key=${GROQ_API_KEY}
+    
+    springdoc.api-docs.enabled=true
+    springdoc.swagger-ui.enabled=true
+    springdoc.info.title=My API Documentation
+    springdoc.info.description=A detailed description of my API.
+    springdoc.info.version=1.0.0
+    
+    spring.servlet.multipart.max-file-size=1MB
+    spring.servlet.multipart.max-request-size=1MB
+
+
+- Below is the application.properties sample for dev environment. where the values for (secrets, passkeys or password or key) get resolved from either environmental variables or hardcoded values.
+
+   ```properties
+    # DataSource properties
+    spring.datasource.url=jdbc:postgresql://localhost:5432/resumebuilder
+    spring.datasource.username=sample_username
+    spring.datasource.password=sample_password
+    
+    # Hibernate properties
+    spring.jpa.hibernate.ddl-auto=update
+    spring.jpa.show-sql=true
+    spring.jpa.properties.hibernate.format_sql=true
+
+
+    # Google OAuth2 Configuration
+    spring.security.oauth2.client.registration.google.client-id=sample_id
+    spring.security.oauth2.client.registration.google.client-secret=sample_secret
+    spring.security.oauth2.client.registration.google.redirect-uri=http://localhost:8080/login/oauth2/code/google
+    
+    ui.domain.uri=http://localhost:5173
+    
+    # SMTP Server Configuration for Gmail
+    spring.mail.port=587
+    spring.mail.username=kaustavofficial09@gmail.com
+    spring.mail.password=sample_app_passkey
+    
+    #braintree creds
+    braintree.sandbox.merchant-id=sample_braintree_merchant_id
+    braintree.sandbox.public-key=sample_public_key
+    braintree.sandbox.private-key=sample_private_key
+    
+    #OCR Space
+    ocr.api.url=http://api.ocr.space/parse/image
+    ocr.api.key=ocr_api_key
+
+    #groq
+    groq.api.key=groq_api_key
+    groq.api.url=https://api.groq.com/openai/v1/chat/completions
 
 
 
