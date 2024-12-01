@@ -167,7 +167,6 @@ To run the unit tests using Maven:
 
 ## Features
 
-- ****: A well-designed REST API to interact with your application.
 - **User Authentication**: Supports login and registration with JWT-based authentication and oauth2 based authentication (as of now google only). As future scope, I will be integrating github and facebook client as well for ease of access.
 - **User Authorization**: As of now, users' activities are categorised into two roles (e.g. Free User, Premium User). Free User can perform basic operations only like resume creation, profile viewing, etc but they can't download their resumes as well as are not allowed to analyse resumes against job description. On the other hand, Premium User can access all the features including the basic ones.
 - **Payment Integration**: In order to be premium user, user needs to pay 20 rupees. And it's a lifetime access to the resources. For Payment integration, braintree has been used.
