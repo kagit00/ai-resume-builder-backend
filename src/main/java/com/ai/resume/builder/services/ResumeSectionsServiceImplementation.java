@@ -10,6 +10,7 @@ import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.repository.ResumeSectionsRepository;
 import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
+import com.ai.resume.builder.utilities.ResponseMakerUtility;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -29,7 +30,9 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
     @CachePut(value = "resumeSectionCache", key = "#result.id",  unless = "#result == null")
     @CacheEvict(value = "resumeSectionsListCache", allEntries = true)
     public ResumeSectionResponse saveResumeSection(ResumeSectionRequest resumeSectionRequest, UUID resumeId, String sectionType) {
-        if (Objects.isNull(resumeSectionRequest) || Objects.isNull(resumeId)) throw new BadRequestException("Resume id or resume section is null");
+        if (Objects.isNull(resumeSectionRequest) || Objects.isNull(resumeId)) {
+            throw new BadRequestException("Resume id or resume section is null");
+        }
 
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         ResumeSection resumeSection = ResumeSection.builder()
@@ -44,11 +47,7 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
         resume.getResumeSections().add(resumeSection);
         resumeRepository.save(resume);
 
-        return ResumeSectionResponse.builder()
-                .id(resumeSection.getId()).title(resumeSection.getTitle()).organization(resumeSection.getOrganization())
-                .startDate(resumeSection.getStartDate()).endDate(resumeSection.getEndDate()).description(resumeSection.getDescription())
-                .location(resumeSection.getLocation()).sectionType(resumeSection.getSectionType().name())
-                .build();
+        return ResponseMakerUtility.getResumeSectionResponse(resumeSection);
     }
 
     @Override
@@ -66,11 +65,9 @@ public class ResumeSectionsServiceImplementation implements ResumeSectionsServic
         if (SectionType.PROJECT.name().toLowerCase().equals(sectionType))
             resumeSections = resumeSectionsRepository.findByResumeAndSectionType(resume, SectionType.PROJECT);
 
-        return resumeSections.stream().map(section -> ResumeSectionResponse.builder()
-                        .id(section.getId()).title(section.getTitle()).organization(section.getOrganization())
-                        .startDate(section.getStartDate()).endDate(section.getEndDate()).description(section.getDescription())
-                        .location(section.getLocation()).sectionType(section.getSectionType().name())
-                        .build()).collect(Collectors.toList());
+        return resumeSections.stream()
+                .map(ResponseMakerUtility::getResumeSectionResponse)
+                .toList();
     }
 
     @Override

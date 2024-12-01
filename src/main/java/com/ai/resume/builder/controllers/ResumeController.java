@@ -3,7 +3,6 @@ package com.ai.resume.builder.controllers;
 import com.ai.resume.builder.models.Resume;
 import com.ai.resume.builder.models.SkillsDTO;
 import com.ai.resume.builder.services.ResumeService;
-import com.ai.resume.builder.services.ResumeServiceImplementation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

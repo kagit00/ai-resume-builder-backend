@@ -3,7 +3,6 @@ package com.ai.resume.builder.controllers;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.ResumeAnalysisResult;
 import com.ai.resume.builder.services.ResumeAnalysisService;
-import com.ai.resume.builder.services.ResumeAnalysisServiceImplementation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class ResumeAnalysisController {
     private final ResumeAnalysisService resumeAnalysisService;
 
     @PostMapping(value = "/upload-and-analyze", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadAndAnalyzeResume(@RequestParam("file") MultipartFile file, @RequestParam("jobDescription") String jobDescription) {
+    public ResponseEntity<Object> uploadAndAnalyzeResume(@RequestParam("file") MultipartFile file, @RequestParam("jobDescription") String jobDescription) {
         try {
             // Extract text from the uploaded file
             String resumeContent = resumeAnalysisService.extractTextFromPdfImage(file);

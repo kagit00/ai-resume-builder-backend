@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
  */
 @ToString
 public class Authority implements GrantedAuthority {
-    private String authority;
+    private final String auth;
 
     /**
      * Instantiates a new Authority.
@@ -16,11 +16,11 @@ public class Authority implements GrantedAuthority {
      * @param authority the authority
      */
     public Authority(String authority) {
-        this.authority = authority;
+        this.auth = authority;
     }
 
     @Override
     public String getAuthority() {
-        return authority;
+        return auth;
     }
 }

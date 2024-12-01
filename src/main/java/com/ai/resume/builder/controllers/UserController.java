@@ -1,9 +1,10 @@
 package com.ai.resume.builder.controllers;
 
+import com.ai.resume.builder.dto.UserRequest;
+import com.ai.resume.builder.dto.UserResponse;
 import com.ai.resume.builder.models.NoContent;
 import com.ai.resume.builder.models.Notification;
 import com.ai.resume.builder.models.PasswordDTO;
-import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.services.UserService;
 import com.ai.resume.builder.validation.ValidPassword;
 import jakarta.validation.Valid;
@@ -32,7 +33,7 @@ public class UserController {
      */
     @Transactional
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> registerUser(@Validated @ValidPassword @RequestBody User user) {
+    public ResponseEntity<UserResponse> registerUser(@Validated @ValidPassword @RequestBody UserRequest user) {
         return new ResponseEntity<>(userService.registerUser(user), HttpStatus.OK);
     }
 
@@ -44,7 +45,7 @@ public class UserController {
      */
     @Transactional
     @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<UserResponse> getUserByUsername(@PathVariable("username") String username) {
         return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
     }
 
@@ -57,7 +58,7 @@ public class UserController {
      */
     @Transactional
     @PutMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> updateUserByUsername(@PathVariable("username") String username, @Valid @RequestBody User user) {
+    public ResponseEntity<UserResponse> updateUserByUsername(@PathVariable("username") String username, @Valid @RequestBody UserRequest user) {
         return new ResponseEntity<>(userService.updateUserByUsername(username, user), HttpStatus.OK);
     }
 
@@ -70,21 +71,21 @@ public class UserController {
 
     @Transactional
     @PutMapping(value = "/notification", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateNotificationEnabled(@RequestBody Notification notification) {
+    public ResponseEntity<Object> updateNotificationEnabled(@RequestBody Notification notification) {
         userService.updateNotificationEnabled(notification);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Transactional
     @PutMapping(value = "/cancel-membership/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> cancelPremiumMembership(@PathVariable("userId") long userId) {
+    public ResponseEntity<Object> cancelPremiumMembership(@PathVariable("userId") long userId) {
         userService.cancelPremiumMembership(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Transactional
     @PutMapping(value = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePassword(@RequestBody PasswordDTO passwordDTO) {
+    public ResponseEntity<Object> updatePassword(@RequestBody PasswordDTO passwordDTO) {
         userService.changePassword(passwordDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }

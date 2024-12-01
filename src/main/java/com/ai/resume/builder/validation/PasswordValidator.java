@@ -11,7 +11,7 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Use
         if (!user.isAuthTypeJwt()) return true;
         else {
             String password = user.getPassword();
-            return !StringUtils.isEmpty(password) && password.matches("^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*[0-9]).+$");
+            return !StringUtils.isEmpty(password) && password.matches("^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*\\d).+$");
         }
     }
 }

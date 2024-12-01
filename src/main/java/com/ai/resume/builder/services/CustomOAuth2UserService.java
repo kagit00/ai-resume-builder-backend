@@ -11,7 +11,6 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -40,17 +39,17 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // Save or update user information in the database
         User user = userRepository.findByUsername(username);
         if (Objects.isNull(user)) {
-            user = new User();
-            user.setUsername(username);
-            user.setName(name);
-            user.setAuthTypeJwt(false);
+            user = User.builder()
+                    .bio("").authTypeJwt(false).name(name).password("").username(username).isNotificationEnabled(true)
+                    .createdAt(DefaultValuesPopulator.getCurrentTimestamp()).updatedAt(DefaultValuesPopulator.getCurrentTimestamp())
+                    .build();
+
+
             Set<UserRole> userRoles = DefaultValuesPopulator.populateDefaultUserRoles(user, roleRepository);
             for (UserRole ur : userRoles)
                 roleRepository.save(ur.getRole());
+
             user.getRoles().addAll(userRoles);
-            user.setPassword("");
-            user.setBio("");
-            user.setTimestamp(DefaultValuesPopulator.getCurrentTimestamp());
             userRepository.save(user);
         }
 

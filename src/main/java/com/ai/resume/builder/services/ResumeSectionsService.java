@@ -2,8 +2,6 @@ package com.ai.resume.builder.services;
 
 import com.ai.resume.builder.dto.ResumeSectionRequest;
 import com.ai.resume.builder.dto.ResumeSectionResponse;
-import com.ai.resume.builder.models.ResumeSection;
-
 import java.util.List;
 import java.util.UUID;
 

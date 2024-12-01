@@ -10,6 +10,7 @@ import com.ai.resume.builder.repository.AdditionalDetailsRepository;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
+import com.ai.resume.builder.utilities.ResponseMakerUtility;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -28,17 +29,20 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
     @Override
     @CachePut(value = "additionalDetailsCache", key = "#resumeId", unless = "#result == null")
     public AdditionalDetailsResponse saveAdditionalDetails(AdditionalDetailsRequest additionalDetailsRequest, UUID resumeId) {
-        if (Objects.isNull(additionalDetailsRequest)) throw new BadRequestException("Additional Details Should've Valid Value");
 
-        if (Objects.isNull(resumeId)) throw new BadRequestException("Resume Id is Not Valid");
+        if (Objects.isNull(additionalDetailsRequest)) {
+            throw new BadRequestException("Additional Details Should've Valid Value");
+        }
+
+        if (Objects.isNull(resumeId)) {
+            throw new BadRequestException("Resume Id is Not Valid");
+        }
 
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         AdditionalDetails additionalDetails = AdditionalDetails.builder()
-                .githubLink(additionalDetailsRequest.getGithubLink())
-                .phoneNumber(additionalDetailsRequest.getPhoneNumber())
-                .linkedInProfileLink(additionalDetailsRequest.getLinkedInProfileLink())
-                .resume(resume)
+                .githubLink(additionalDetailsRequest.getGithubLink()).phoneNumber(additionalDetailsRequest.getPhoneNumber())
+                .linkedInProfileLink(additionalDetailsRequest.getLinkedInProfileLink()).resume(resume)
                 .build();
 
         resume.setAdditionalDetails(additionalDetails);
@@ -47,12 +51,7 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
         additionalDetailsRepository.save(additionalDetails);
         resumeRepository.save(resume);
 
-        return AdditionalDetailsResponse.builder()
-                .id(additionalDetails.getId())
-                .githubLink(additionalDetails.getGithubLink())
-                .phoneNumber(additionalDetails.getPhoneNumber())
-                .linkedInProfileLink(additionalDetails.getLinkedInProfileLink())
-                .build();
+        return ResponseMakerUtility.getAdditionalDetailsResponse(additionalDetails);
     }
 
     @Override
@@ -60,15 +59,7 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
     public AdditionalDetailsResponse getAdditionalDetails(UUID resumeId) {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         AdditionalDetails additionalDetails = additionalDetailsRepository.findByResume(resume);
-
-        if (Objects.isNull(additionalDetails)) return null;
-
-        return AdditionalDetailsResponse.builder()
-                .id(additionalDetails.getId())
-                .githubLink(additionalDetails.getGithubLink())
-                .phoneNumber(additionalDetails.getPhoneNumber())
-                .linkedInProfileLink(additionalDetails.getLinkedInProfileLink())
-                .build();
+        return ResponseMakerUtility.getAdditionalDetailsResponse(additionalDetails);
     }
 
     @Override
@@ -76,8 +67,6 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
     public AdditionalDetailsResponse updateAdditionalDetails(AdditionalDetailsRequest additionalDetailsRequest, UUID resumeId, UUID additionalDetailsId) {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         AdditionalDetails additionalDetails = additionalDetailsRepository.findByResume(resume);
-
-        if (Objects.isNull(additionalDetails)) return null;
 
         additionalDetails.setGithubLink(additionalDetailsRequest.getGithubLink());
         additionalDetails.setPhoneNumber(additionalDetailsRequest.getPhoneNumber());
@@ -90,11 +79,6 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
         additionalDetailsRepository.save(additionalDetails);
         resumeRepository.save(resume);
 
-        return AdditionalDetailsResponse.builder()
-                .id(additionalDetails.getId())
-                .githubLink(additionalDetails.getGithubLink())
-                .phoneNumber(additionalDetails.getPhoneNumber())
-                .linkedInProfileLink(additionalDetails.getLinkedInProfileLink())
-                .build();
+        return ResponseMakerUtility.getAdditionalDetailsResponse(additionalDetails);
     }
 }

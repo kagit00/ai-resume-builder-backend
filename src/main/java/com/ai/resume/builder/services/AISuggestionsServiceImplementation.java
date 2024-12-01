@@ -4,7 +4,6 @@ import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.AISuggestion;
 import com.ai.resume.builder.utilities.Connector;
 import com.ai.resume.builder.utilities.Constant;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

@@ -1,7 +1,9 @@
 package com.ai.resume.builder.services;
 
 import com.ai.resume.builder.exceptions.BadRequestException;
+import com.ai.resume.builder.utilities.ImageCompressionUtility;
 import com.ai.resume.builder.utilities.PDFValidationUtility;
+import com.ai.resume.builder.utilities.TextExtractionUtility;
 import org.apache.http.entity.ContentType;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.ResumeAnalysisResult;
@@ -109,9 +111,6 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
 
             // Create temp directory if it doesn't exist
             File tempDir = new File(System.getProperty("java.io.tmpdir"), "appUploads");
-            if (!tempDir.exists()) {
-                boolean t = tempDir.mkdirs();
-            }
 
             // Ensure the directory is valid
             if (!PDFValidationUtility.isValidPath(tempDir)) {
@@ -144,7 +143,7 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
                 HttpEntity responseEntity = response.getEntity();
                 if (!Objects.isNull(responseEntity)) {
                     String jsonResponse = EntityUtils.toString(responseEntity);
-                    return extractTextFromJson(jsonResponse);
+                    return TextExtractionUtility.extractTextFromJson(jsonResponse);
                 } else {
                     throw new InternalServerErrorException("Empty response from OCR");
                 }
@@ -165,7 +164,7 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
             for (int page = 0; page < document.getNumberOfPages(); page++) {
                 BufferedImage image = pdfRenderer.renderImageWithDPI(page, 150);  // Lower DPI here
                 File imageFile = File.createTempFile("page_" + page, ".jpg");  // Use JPEG for compression
-                compressImage(image, imageFile);  // Compress and save image
+                ImageCompressionUtility.compressImage(image, imageFile);  // Compress and save image
                 imageFiles.add(imageFile);
             }
             document.close();
@@ -173,15 +172,6 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }
-    }
-
-    // Compress image before sending it to the OCR API
-    private void compressImage(BufferedImage image, File outputFile) throws IOException {
-        BufferedImage compressedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-        compressedImage.createGraphics().drawImage(image, 0, 0, null);
-
-        // Save compressed image as JPEG with compression quality (75%)
-        ImageIO.write(compressedImage, "jpg", outputFile);
     }
 
     private String performOcrOnImage(File imageFile) {
@@ -199,24 +189,11 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
                 HttpEntity responseEntity = response.getEntity();
                 if (!Objects.isNull(responseEntity)) {
                     String jsonResponse = EntityUtils.toString(responseEntity);
-                    return extractTextFromJson(jsonResponse);
+                    return TextExtractionUtility.extractTextFromJson(jsonResponse);
                 } else {
                     throw new InternalServerErrorException("Empty response from OCR API");
                 }
             }
-        } catch (Exception e) {
-            throw new InternalServerErrorException(e.getMessage());
-        }
-    }
-
-    private String extractTextFromJson(String jsonResponse) {
-        try {
-            JSONObject jsonObject = new JSONObject(jsonResponse);
-            // Extract the text from the JSON response
-            return jsonObject
-                    .getJSONArray("ParsedResults")
-                    .getJSONObject(0)
-                    .getString("ParsedText");
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }

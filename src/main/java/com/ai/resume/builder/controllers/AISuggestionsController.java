@@ -2,7 +2,6 @@ package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.AISuggestion;
 import com.ai.resume.builder.services.AISuggestionsService;
-import com.ai.resume.builder.services.AISuggestionsServiceImplementation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

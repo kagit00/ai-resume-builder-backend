@@ -1,25 +1,22 @@
 package com.ai.resume.builder.models;
 
 import com.ai.resume.builder.utilities.Constant;
-import com.ai.resume.builder.validation.ValidEmail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "users")
 public class User implements UserDetails, Serializable {
@@ -28,7 +25,6 @@ public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ValidEmail
     @Column(name = "username", nullable = false, unique = true)
     private String username;
     private String name;
@@ -36,17 +32,19 @@ public class User implements UserDetails, Serializable {
     private String password;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
+    @Builder.Default
     private List<Resume> resumes = new ArrayList<>();
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,  mappedBy = "user", orphanRemoval = true)
+    @Builder.Default
     private Set<UserRole> roles = new HashSet<>();
-    @NotNull
-    private boolean authTypeJwt = false;
+    private boolean authTypeJwt;
     private String bio;
     @Column(nullable = false)
-    private String timestamp;
+    private String createdAt;
+    private String updatedAt;
     @Column(nullable = false)
-    private boolean isNotificationEnabled = true;
+    private boolean isNotificationEnabled;
 
     private static final Logger log = LoggerFactory.getLogger(User.class);
 

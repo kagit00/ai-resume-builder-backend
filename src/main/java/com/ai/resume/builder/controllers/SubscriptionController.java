@@ -3,7 +3,6 @@ package com.ai.resume.builder.controllers;
 import com.ai.resume.builder.models.BraintreeClientToken;
 import com.ai.resume.builder.models.CheckoutRequest;
 import com.ai.resume.builder.services.SubscriptionService;
-import com.ai.resume.builder.services.SubscriptionServiceImplementation;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import lombok.AllArgsConstructor;

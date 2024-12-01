@@ -9,13 +9,13 @@ import com.ai.resume.builder.repository.LanguageRepository;
 import com.ai.resume.builder.repository.ResumeRepository;
 import com.ai.resume.builder.utilities.BasicUtility;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
+import com.ai.resume.builder.utilities.ResponseMakerUtility;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,7 +27,10 @@ public class LanguageServiceImplementation implements LanguageService {
     @CachePut(value = "languageCache", key = "#result.id", unless = "#result == null")
     @CacheEvict(value = "languagesListCache", allEntries = true)
     public LanguageResponse saveLanguage(UUID resumeId, LanguageRequest languageRequest) {
-        if (Objects.isNull(resumeId) && Objects.isNull(languageRequest)) throw new BadRequestException("Resume id and language should not be empty.");
+        if (Objects.isNull(resumeId) && Objects.isNull(languageRequest)) {
+            throw new BadRequestException("Resume id and language should not be empty.");
+        }
+
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         Language language = Language.builder().name(languageRequest.getName()).proficiencyLevel(languageRequest.getProficiencyLevel())
@@ -39,7 +42,7 @@ public class LanguageServiceImplementation implements LanguageService {
         resume.getLanguages().add(language);
         resumeRepository.save(resume);
 
-        return LanguageResponse.builder().id(language.getId()).name(language.getName()).proficiencyLevel(language.getProficiencyLevel()).build();
+        return ResponseMakerUtility.getLanguageResponse(language);
     }
 
     @Override
@@ -48,9 +51,9 @@ public class LanguageServiceImplementation implements LanguageService {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         List<Language> languages = languageRepository.findByResume(resume);
 
-        return languages.stream().map(lang -> LanguageResponse.builder()
-                        .id(lang.getId()).name(lang.getName()).proficiencyLevel(lang.getProficiencyLevel())
-                        .build()).collect(Collectors.toList());
+        return languages.stream()
+                .map(ResponseMakerUtility::getLanguageResponse)
+                .toList();
     }
 
     @Override
