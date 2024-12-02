@@ -39,7 +39,7 @@ public class User implements UserDetails, Serializable {
     @Builder.Default
     private List<Resume> resumes = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JsonManagedReference
     @Builder.Default
     @JoinTable(

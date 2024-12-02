@@ -6,7 +6,9 @@ import com.ai.resume.builder.models.*;
 import com.ai.resume.builder.models.TransactionDetails;
 import com.ai.resume.builder.repository.*;
 import com.ai.resume.builder.utilities.Constant;
+import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import com.braintreegateway.*;
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ public class SubscriptionServiceImplementation implements SubscriptionService {
     private final UserRepository userRepository;
     private final TransactionDetailsRepository transactionDetailsRepository;
     private final EmailServiceImplementation emailService;
+    private final EntityManager entityManager;
 
     @Override
     public Result<Transaction> subscribe(CheckoutRequest request, long userId) {
@@ -45,24 +48,16 @@ public class SubscriptionServiceImplementation implements SubscriptionService {
             if (user.isFreeUser() && !user.isPremiumUser()) {
                 saveTransactionDetails(user, transaction, request);
 
-                // Add the PREMIUM_USER role directly to the user
-                Role premiumRole = roleRepository.findByName(Constant.PREMIUM_USER);
-                if (premiumRole == null) {
-                    logger.info("{} role not found. Creating the role.", Constant.PREMIUM_USER);
-                    premiumRole = new Role();
-                    premiumRole.setName(Constant.PREMIUM_USER);
-                    premiumRole = roleRepository.save(premiumRole);
-                }
+                Role userRole = DefaultValuesPopulator.populateDefaultPremiumUserRoles(roleRepository, entityManager);
 
-                // Add the PREMIUM_USER role to the user
-                user.getRoles().add(premiumRole);
+                user.getRoles().add(userRole);
                 logger.debug("user has these roles: {}", user.getRoles());
                 userRepository.save(user);
 
-                if (user.isNotificationEnabled())
+                if (user.isNotificationEnabled()) {
                     emailService.sendPremiumSubscriptionEmail(user.getUsername(), user.getName());
+                }
             } else {
-                // Handle the failure case
                 logger.error("Transaction failed: {}", transactionResult.getMessage());
                 throw new InternalServerErrorException("Transaction failed: " + transactionResult.getMessage());
             }

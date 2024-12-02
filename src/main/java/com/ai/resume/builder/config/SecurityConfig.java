@@ -8,6 +8,7 @@ import com.ai.resume.builder.repository.UserRepository;
 import com.ai.resume.builder.security.OAuth2SuccessHandler;
 import com.ai.resume.builder.services.CustomOAuth2UserService;
 import com.ai.resume.builder.utilities.Constant;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +43,7 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler successHandler;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final EntityManager entityManager;
 
     /**
      * Instantiates a new Security config.
@@ -54,13 +56,15 @@ public class SecurityConfig {
             AuthTokenFilter authTokenFilter,
             OAuth2SuccessHandler successHandler,
             UserRepository userRepository,
-            RoleRepository roleRepository
+            RoleRepository roleRepository,
+            EntityManager entityManager
     ) {
         this.unauthorizedHandler = unauthorizedHandler;
         this.authTokenFilter = authTokenFilter;
         this.successHandler = successHandler;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -86,7 +90,7 @@ public class SecurityConfig {
 
     @Bean
     public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
-        return new CustomOAuth2UserService(userRepository, roleRepository);
+        return new CustomOAuth2UserService(userRepository, roleRepository, entityManager);
     }
 
 

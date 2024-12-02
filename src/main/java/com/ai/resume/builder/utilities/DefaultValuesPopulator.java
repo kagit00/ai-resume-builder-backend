@@ -1,16 +1,14 @@
 package com.ai.resume.builder.utilities;
 
 import com.ai.resume.builder.models.Role;
-import com.ai.resume.builder.models.User;
 import com.ai.resume.builder.repository.RoleRepository;
+import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.ZoneOffset;
-
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 public final class DefaultValuesPopulator {
@@ -40,7 +38,8 @@ public final class DefaultValuesPopulator {
     }
 
 
-    public static Role populateDefaultUserRoles(RoleRepository roleRepository) {
+    @Transactional
+    public static Role populateDefaultUserRoles(RoleRepository roleRepository, EntityManager entityManager) {
         Role role = roleRepository.findByName(Constant.FREE_USER);
 
         if (Objects.isNull(role)) {
@@ -49,10 +48,11 @@ public final class DefaultValuesPopulator {
             role = roleRepository.save(role);
         }
 
-        return role;
+        return entityManager.merge(role);
     }
 
-    public static Set<Role> populateDefaultPremiumUserRoles(RoleRepository roleRepository) {
+    @Transactional
+    public static Role populateDefaultPremiumUserRoles(RoleRepository roleRepository, EntityManager entityManager) {
         Role role = roleRepository.findByName(Constant.PREMIUM_USER);
 
         if (Objects.isNull(role)) {
@@ -61,9 +61,6 @@ public final class DefaultValuesPopulator {
             role = roleRepository.save(role);
         }
 
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-
-        return roles;
+        return entityManager.merge(role);
     }
 }

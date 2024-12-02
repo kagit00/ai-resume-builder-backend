@@ -4,6 +4,7 @@ import com.ai.resume.builder.models.Role;
 import com.ai.resume.builder.repository.RoleRepository;
 import com.ai.resume.builder.repository.UserRepository;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 import com.ai.resume.builder.models.User;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -21,8 +23,10 @@ import com.ai.resume.builder.models.User;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final EntityManager entityManager;
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
 
@@ -42,7 +46,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                     .createdAt(DefaultValuesPopulator.getCurrentTimestamp()).updatedAt(DefaultValuesPopulator.getCurrentTimestamp())
                     .build();
 
-            Role userRole = DefaultValuesPopulator.populateDefaultUserRoles(roleRepository);
+            Role userRole = DefaultValuesPopulator.populateDefaultUserRoles(roleRepository, entityManager);
             user.getRoles().add(userRole);
             userRepository.save(user);
         }

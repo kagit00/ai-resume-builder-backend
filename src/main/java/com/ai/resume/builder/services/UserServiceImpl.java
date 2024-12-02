@@ -11,6 +11,7 @@ import com.ai.resume.builder.repository.UserRepository;
 import com.ai.resume.builder.utilities.Constant;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import com.ai.resume.builder.utilities.ResponseMakerUtility;
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final Cache cache;
     private final RoleRepository roleRepository;
+    private final EntityManager entityManager;
 
     @Override
     public UserResponse registerUser(UserRequest userRequest) {
@@ -41,7 +43,7 @@ public class UserServiceImpl implements UserService {
                 .createdAt(DefaultValuesPopulator.getCurrentTimestamp()).updatedAt(DefaultValuesPopulator.getCurrentTimestamp())
                 .build();
 
-        Role userRole = DefaultValuesPopulator.populateDefaultUserRoles(roleRepository);
+        Role userRole = DefaultValuesPopulator.populateDefaultUserRoles(roleRepository, entityManager);
         user.getRoles().add(userRole);
         userRepository.save(user);
 
