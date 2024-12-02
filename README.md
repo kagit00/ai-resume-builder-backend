@@ -1,5 +1,5 @@
 # Project Title & Live Link
-**AI Resume Builder** | Domain Link: https://ai-resume-builder-443308.uc.r.appspot.com
+**AI Resume Builder** | Domain Link: https://shorturl.at/0qgVb
 
 
 
