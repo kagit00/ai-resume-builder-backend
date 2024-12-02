@@ -27,8 +27,6 @@ and keyword optimization, increasing the likelihood of landing job interviews.
 2. **Clone the repository**: 
    ```bash
    git clone https://github.com/kagit00/ai-resume-builder-backend.git
-   cd ai-resume-builder-backend
-   mvn spring-boot:run
 
 3. **Navigate to project**: 
    ```bash
