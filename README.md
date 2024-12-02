@@ -1,5 +1,5 @@
 # Project Title & Live Link
-**AI Resume Builder** | Domain Link: https://ai-resume-builder-443308.uc.r.appspot.com
+**AI Resume Builder** | Domain Link: https://shorturl.at/0qgVb
 
 
 
@@ -27,11 +27,14 @@ and keyword optimization, increasing the likelihood of landing job interviews.
 2. **Clone the repository**: 
    ```bash
    git clone https://github.com/kagit00/ai-resume-builder-backend.git
+
+3. **Navigate to project**: 
+   ```bash
    cd ai-resume-builder-backend
+
+3. **Run**: 
+   ```bash
    mvn spring-boot:run
-
-
-
 
 ### Configuration
 - Currently, this project has been deployed using Google App Engine (GAE). The potential passkeys come from GCP Secret Manager. 
@@ -159,8 +162,8 @@ Ensure that you have the following tools installed to run the tests:
 Unit tests are located in the `src/test/java` directory and are executed using JUnit.
 
 To run the unit tests using Maven:
-      ```bash
-      mvn test
+      
+ mvn test
 
 
 
@@ -179,7 +182,7 @@ To run the unit tests using Maven:
 
 ## Contributing
 
-We welcome contributions from the community. Please follow the steps below to contribute to this project:
+I welcome contributions from the community. Please follow the steps below to contribute to this project:
 
 ### Steps to Contribute
 
