@@ -1,6 +1,6 @@
 package com.ai.resume.builder.services;
 
-import com.ai.resume.builder.models.UserRole;
+import com.ai.resume.builder.models.Role;
 import com.ai.resume.builder.repository.RoleRepository;
 import com.ai.resume.builder.repository.UserRepository;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
@@ -13,9 +13,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import com.ai.resume.builder.models.User;
+
 
 @Service
 @AllArgsConstructor
@@ -36,20 +35,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
         attributes.put("accessToken", token);
 
-        // Save or update user information in the database
         User user = userRepository.findByUsername(username);
-        if (Objects.isNull(user)) {
+        if (user == null) {
             user = User.builder()
                     .bio("").authTypeJwt(false).name(name).password("").username(username).isNotificationEnabled(true)
                     .createdAt(DefaultValuesPopulator.getCurrentTimestamp()).updatedAt(DefaultValuesPopulator.getCurrentTimestamp())
                     .build();
 
-
-            Set<UserRole> userRoles = DefaultValuesPopulator.populateDefaultUserRoles(user, roleRepository);
-            for (UserRole ur : userRoles)
-                roleRepository.save(ur.getRole());
-
-            user.getRoles().addAll(userRoles);
+            Role userRole = DefaultValuesPopulator.populateDefaultUserRoles(roleRepository);
+            user.getRoles().add(userRole);
             userRepository.save(user);
         }
 

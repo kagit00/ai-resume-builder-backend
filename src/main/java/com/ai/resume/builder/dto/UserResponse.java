@@ -1,7 +1,7 @@
 package com.ai.resume.builder.dto;
 
 import com.ai.resume.builder.models.Resume;
-import com.ai.resume.builder.models.UserRole;
+import com.ai.resume.builder.models.Role;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class UserResponse {
     @Builder.Default
     private List<Resume> resumes = new ArrayList<>();
     @Builder.Default
-    private Set<UserRole> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
     private String password;
     private String bio;
 }

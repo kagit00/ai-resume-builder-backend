@@ -16,7 +16,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Objects;
-import java.util.Set;
+
 
 @Service
 @AllArgsConstructor
@@ -24,7 +24,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final Cache cache;
     private final RoleRepository roleRepository;
-
 
     @Override
     public UserResponse registerUser(UserRequest userRequest) {
@@ -42,11 +41,8 @@ public class UserServiceImpl implements UserService {
                 .createdAt(DefaultValuesPopulator.getCurrentTimestamp()).updatedAt(DefaultValuesPopulator.getCurrentTimestamp())
                 .build();
 
-        Set<UserRole> userRoles = DefaultValuesPopulator.populateDefaultUserRoles(user, roleRepository);
-        for (UserRole ur : userRoles)
-            roleRepository.save(ur.getRole());
-
-        user.getRoles().addAll(userRoles);
+        Role userRole = DefaultValuesPopulator.populateDefaultUserRoles(roleRepository);
+        user.getRoles().add(userRole);
         userRepository.save(user);
 
         return ResponseMakerUtility.getUserResponse(user);
@@ -104,15 +100,19 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(value = "userCache", allEntries = true)
     public void cancelPremiumMembership(long userId) {
         User user = cache.getUserById(userId);
-        Role r = roleRepository.findByRoleName(Constant.PREMIUM_USER);
+        Role premiumRole = roleRepository.findByName(Constant.PREMIUM_USER);
 
-        user.getRoles().removeIf(userRole -> {
-            if (userRole.getRole().getId() == r.getId()) {
-                userRole.setUser(null);
-                return true;
-            }
-            return false;
-        });
+        if (premiumRole == null) {
+            throw new BadRequestException("Premium role not found.");
+        }
+
+        // Remove the premium role directly from the user's roles
+        boolean removed = user.getRoles().removeIf(role -> role.getId() == premiumRole.getId());
+
+        if (!removed) {
+            throw new BadRequestException("User does not have a premium membership.");
+        }
+
         userRepository.save(user);
     }
 

@@ -5,7 +5,7 @@ import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.*;
 import com.ai.resume.builder.models.TransactionDetails;
 import com.ai.resume.builder.repository.*;
-import com.ai.resume.builder.utilities.DefaultValuesPopulator;
+import com.ai.resume.builder.utilities.Constant;
 import com.braintreegateway.*;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -28,11 +27,8 @@ public class SubscriptionServiceImplementation implements SubscriptionService {
 
     @Override
     public Result<Transaction> subscribe(CheckoutRequest request, long userId) {
-        TransactionRequest transactionRequest = new TransactionRequest()
-                .amount(request.getAmount())
-                .paymentMethodNonce(request.getPaymentMethodNonce())
-                .options()
-                .submitForSettlement(true)
+        TransactionRequest transactionRequest = new TransactionRequest().amount(request.getAmount())
+                .paymentMethodNonce(request.getPaymentMethodNonce()).options().submitForSettlement(true)
                 .done();
 
         Result<Transaction> transactionResult = braintreeGateway.transaction().sale(transactionRequest);
@@ -49,11 +45,17 @@ public class SubscriptionServiceImplementation implements SubscriptionService {
             if (user.isFreeUser() && !user.isPremiumUser()) {
                 saveTransactionDetails(user, transaction, request);
 
-                Set<UserRole> userRoles = DefaultValuesPopulator.populateDefaultPremiumUserRoles(user, roleRepository);
-                for (UserRole ur : userRoles)
-                    roleRepository.save(ur.getRole());
-                user.getRoles().addAll(userRoles);
+                // Add the PREMIUM_USER role directly to the user
+                Role premiumRole = roleRepository.findByName(Constant.PREMIUM_USER);
+                if (premiumRole == null) {
+                    logger.info("{} role not found. Creating the role.", Constant.PREMIUM_USER);
+                    premiumRole = new Role();
+                    premiumRole.setName(Constant.PREMIUM_USER);
+                    premiumRole = roleRepository.save(premiumRole);
+                }
 
+                // Add the PREMIUM_USER role to the user
+                user.getRoles().add(premiumRole);
                 logger.debug("user has these roles: {}", user.getRoles());
                 userRepository.save(user);
 
@@ -65,8 +67,10 @@ public class SubscriptionServiceImplementation implements SubscriptionService {
                 throw new InternalServerErrorException("Transaction failed: " + transactionResult.getMessage());
             }
         }
+
         return transactionResult;
     }
+
 
     @Override
     public BraintreeClientToken generateClientToken() {

@@ -33,7 +33,7 @@ public class UserController {
      */
     @Transactional
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserResponse> registerUser(@Validated @ValidPassword @RequestBody UserRequest user) {
+    public ResponseEntity<UserResponse> registerUser(@Validated @RequestBody UserRequest user) {
         return new ResponseEntity<>(userService.registerUser(user), HttpStatus.OK);
     }
 

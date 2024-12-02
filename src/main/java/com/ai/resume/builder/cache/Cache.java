@@ -50,6 +50,6 @@ public class Cache {
 
     @Cacheable(value = "rolesCache", key = "#roleName", unless = "#result == null")
     public Role getRoleByName(String roleName) {
-        return roleRepository.findByRoleName(roleName);
+        return roleRepository.findByName(roleName);
     }
 }

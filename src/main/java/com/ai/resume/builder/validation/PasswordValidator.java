@@ -1,17 +1,26 @@
 package com.ai.resume.builder.validation;
 
-import com.ai.resume.builder.models.User;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.apache.commons.lang3.StringUtils;
 
-public class PasswordValidator implements ConstraintValidator<ValidPassword, User> {
+public class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
+
     @Override
-    public boolean isValid(User user, ConstraintValidatorContext context) {
-        if (!user.isAuthTypeJwt()) return true;
-        else {
-            String password = user.getPassword();
-            return !StringUtils.isEmpty(password) && password.matches("^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*\\d).+$");
+    public void initialize(ValidPassword constraintAnnotation) {
+        // Initialization code if needed
+    }
+
+    @Override
+    public boolean isValid(String password, ConstraintValidatorContext context) {
+        if (password == null || password.isEmpty()) {
+            return false;
         }
+
+        // Password must meet the following criteria:
+        // - At least one uppercase letter
+        // - At least one special character
+        // - At least one digit
+        return password.matches("^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*\\d).+$");
     }
 }
+

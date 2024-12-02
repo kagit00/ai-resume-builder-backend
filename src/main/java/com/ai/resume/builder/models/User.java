@@ -1,7 +1,6 @@
 package com.ai.resume.builder.models;
 
 import com.ai.resume.builder.utilities.Constant;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Builder
 @AllArgsConstructor
@@ -25,24 +25,39 @@ public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @Column(name = "username", nullable = false, unique = true)
     private String username;
+
     private String name;
+
     @Column(nullable = false)
     private String password;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     @Builder.Default
     private List<Resume> resumes = new ArrayList<>();
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,  mappedBy = "user", orphanRemoval = true)
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     @Builder.Default
-    private Set<UserRole> roles = new HashSet<>();
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
     private boolean authTypeJwt;
+
     private String bio;
+
     @Column(nullable = false)
     private String createdAt;
+
     private String updatedAt;
+
     @Column(nullable = false)
     private boolean isNotificationEnabled;
 
@@ -50,19 +65,12 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<Authority> authorities = new HashSet<>();
-        log.debug("User {} has roles: {}", this.username, this.roles.size());
-        this.roles.forEach(userRole -> {
-            Role role = userRole.getRole(); // Fetch the role
-            if (role != null) {
-                log.debug("Adding role authority: {}", role.getRoleName());
-                authorities.add(new Authority(role.getRoleName()));
-            } else {
-                log.warn("Null role found for user {}", this.username);
-            }
-        });
-
-        return authorities;
+        if (roles == null || roles.isEmpty()) {
+            log.warn("No roles assigned to user: {}", username);
+        }
+        return roles.stream()
+                .map(role -> new Authority(role.getName()))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -87,7 +95,7 @@ public class User implements UserDetails, Serializable {
 
     public boolean hasRole(String roleName) {
         return roles.stream()
-                .anyMatch(userRole -> userRole.getRole().getRoleName().equalsIgnoreCase(roleName));
+                .anyMatch(role -> role.getName().equalsIgnoreCase(roleName));
     }
 
     public boolean isPremiumUser() {
