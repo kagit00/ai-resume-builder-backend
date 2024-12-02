@@ -36,7 +36,6 @@ and keyword optimization, increasing the likelihood of landing job interviews.
    ```bash
    mvn spring-boot:run
 
-
 ### Configuration
 - Currently, this project has been deployed using Google App Engine (GAE). The potential passkeys come from GCP Secret Manager. 
 - These Passkeys mostly consist of Groq API Key, OCR API Key, oAuth2 Regn Client Id, oAuth2 Regn. Client Secret, Postgres Database creds etc.
@@ -163,8 +162,8 @@ Ensure that you have the following tools installed to run the tests:
 Unit tests are located in the `src/test/java` directory and are executed using JUnit.
 
 To run the unit tests using Maven:
-      ```bash
-      mvn test
+      
+ mvn test
 
 
 
