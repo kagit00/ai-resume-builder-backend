@@ -30,7 +30,13 @@ and keyword optimization, increasing the likelihood of landing job interviews.
    cd ai-resume-builder-backend
    mvn spring-boot:run
 
+3. **Navigate to project**: 
+   ```bash
+   cd ai-resume-builder-backend
 
+3. **Run**: 
+   ```bash
+   mvn spring-boot:run
 
 
 ### Configuration
