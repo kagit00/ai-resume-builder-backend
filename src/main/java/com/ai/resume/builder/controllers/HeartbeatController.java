@@ -1,6 +1,8 @@
 package com.ai.resume.builder.controllers;
 
 import com.ai.resume.builder.models.Heartbeat;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/")
 @RestController
+@Tag(name = "HeartBeat API", description = "Operations related to HeartBeat of the server")
 public class HeartbeatController {
 
     @GetMapping(value = "heartbeat", produces = MediaType.APPLICATION_JSON_VALUE)

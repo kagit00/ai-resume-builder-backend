@@ -3,6 +3,9 @@ package com.ai.resume.builder.controllers;
 import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.services.EmailService;
 import com.ai.resume.builder.services.EmailServiceImplementation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/resume/completed")
+@Tag(name = "E-mail API", description = "Operations related to Email")
 public class EmailController {
     @Value("${ui.domain.uri}")
     private String uiDomainUri;
@@ -25,6 +29,12 @@ public class EmailController {
         this.emailService = emailService;
     }
 
+    @Operation(summary = "Send Email",
+            description = "Requires either JWT or OAuth2 for authentication",
+            security = {
+                    @SecurityRequirement(name = "JWT"),
+                    @SecurityRequirement(name = "OAuth2")
+            })
     @GetMapping("/send-email")
     @Transactional
     public ResponseEntity<String> sendEmail(@RequestParam String username, @RequestParam String name, @RequestParam boolean isFreeUser) {

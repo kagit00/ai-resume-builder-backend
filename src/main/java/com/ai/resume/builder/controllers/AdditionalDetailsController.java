@@ -3,6 +3,9 @@ package com.ai.resume.builder.controllers;
 import com.ai.resume.builder.dto.AdditionalDetailsRequest;
 import com.ai.resume.builder.dto.AdditionalDetailsResponse;
 import com.ai.resume.builder.services.AdditionalDetailsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,9 +18,16 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/resume")
 @AllArgsConstructor
+@Tag(name = "Resume Additional Details API", description = "Operations related to additional details of resume")
 public class AdditionalDetailsController {
     private final AdditionalDetailsService additionalDetailsService;
 
+    @Operation(summary = "Save Additional Details",
+            description = "Requires either JWT or OAuth2 for authentication",
+            security = {
+                    @SecurityRequirement(name = "JWT"),
+                    @SecurityRequirement(name = "OAuth2")
+            })
     @Transactional
     @PostMapping(
             value = "/{resumeId}/additional-details",
@@ -29,6 +39,12 @@ public class AdditionalDetailsController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Get Additional Details",
+            description = "Requires either JWT or OAuth2 for authentication",
+            security = {
+                    @SecurityRequirement(name = "JWT"),
+                    @SecurityRequirement(name = "OAuth2")
+            })
     @Transactional
     @GetMapping(
             value = "/{resumeId}/additional-details",
@@ -39,6 +55,12 @@ public class AdditionalDetailsController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "Update Additional Details",
+            description = "Requires either JWT or OAuth2 for authentication",
+            security = {
+                    @SecurityRequirement(name = "JWT"),
+                    @SecurityRequirement(name = "OAuth2")
+            })
     @Transactional
     @PutMapping(
             value = "/{resumeId}/additional-details/{additionalDetailsId}",

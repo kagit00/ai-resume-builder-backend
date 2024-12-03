@@ -7,7 +7,7 @@
 - [Description](#description)
 - [Installation](#install--run)
 - [Configuration](#configuration)
-- [API Documentation](#api-documentation)
+- [API Specification](#api-specification)
 - [Features](#features)
 - [Contributing](#contributing)
 - [Testing](#testing)

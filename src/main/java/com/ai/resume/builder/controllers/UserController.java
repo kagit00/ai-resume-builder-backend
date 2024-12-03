@@ -6,6 +6,9 @@ import com.ai.resume.builder.models.NoContent;
 import com.ai.resume.builder.models.Notification;
 import com.ai.resume.builder.models.PasswordDTO;
 import com.ai.resume.builder.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
+@Tag(name = "User API", description = "Operations related to User")
 public class UserController {
     private final UserService userService;
 
@@ -30,6 +34,7 @@ public class UserController {
      * @param user the user
      * @return the response entity
      */
+    @Operation(summary = "Register User")
     @Transactional
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponse> registerUser(@Validated @RequestBody UserRequest user) {
@@ -42,6 +47,12 @@ public class UserController {
      * @param username the username
      * @return the user by username
      */
+    @Operation(summary = "Get User By Username",
+            description = "Requires either JWT or OAuth2 for authentication",
+            security = {
+                    @SecurityRequirement(name = "JWT"),
+                    @SecurityRequirement(name = "OAuth2")
+            })
     @Transactional
     @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponse> getUserByUsername(@PathVariable("username") String username) {
@@ -55,12 +66,24 @@ public class UserController {
      * @param user     the user
      * @return the response entity
      */
+    @Operation(summary = "Update User By Username",
+            description = "Requires either JWT or OAuth2 for authentication",
+            security = {
+                    @SecurityRequirement(name = "JWT"),
+                    @SecurityRequirement(name = "OAuth2")
+            })
     @Transactional
     @PutMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponse> updateUserByUsername(@PathVariable("username") String username, @Valid @RequestBody UserRequest user) {
         return new ResponseEntity<>(userService.updateUserByUsername(username, user), HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete User By Id",
+            description = "Requires either JWT or OAuth2 for authentication",
+            security = {
+                    @SecurityRequirement(name = "JWT"),
+                    @SecurityRequirement(name = "OAuth2")
+            })
     @Transactional
     @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> deleteUserById(@PathVariable("userId") long userId) {
@@ -68,6 +91,12 @@ public class UserController {
         return new ResponseEntity<>(new NoContent(HttpStatus.OK, "User successfully deleted."), HttpStatus.OK);
     }
 
+    @Operation(summary = "Update Notification Enabled",
+            description = "Requires either JWT or OAuth2 for authentication",
+            security = {
+                    @SecurityRequirement(name = "JWT"),
+                    @SecurityRequirement(name = "OAuth2")
+            })
     @Transactional
     @PutMapping(value = "/notification", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateNotificationEnabled(@RequestBody Notification notification) {
@@ -75,6 +104,12 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Operation(summary = "Cancel Premium Membership",
+            description = "Requires either JWT or OAuth2 for authentication",
+            security = {
+                    @SecurityRequirement(name = "JWT"),
+                    @SecurityRequirement(name = "OAuth2")
+            })
     @Transactional
     @PutMapping(value = "/cancel-membership/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> cancelPremiumMembership(@PathVariable("userId") long userId) {
@@ -82,6 +117,13 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
+    @Operation(summary = "Update Password",
+            description = "Requires either JWT or OAuth2 for authentication",
+            security = {
+                    @SecurityRequirement(name = "JWT"),
+                    @SecurityRequirement(name = "OAuth2")
+            })
     @Transactional
     @PutMapping(value = "/change-password", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updatePassword(@RequestBody PasswordDTO passwordDTO) {
