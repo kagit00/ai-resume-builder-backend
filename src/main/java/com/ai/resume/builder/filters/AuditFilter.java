@@ -1,9 +1,10 @@
 package com.ai.resume.builder.filters;
 
-import com.ai.resume.builder.encryption.EncryptionUtil;
+
 import com.ai.resume.builder.models.Audit;
 import com.ai.resume.builder.repository.AuditRepository;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
+import com.ai.resume.builder.utilities.EncryptionUtil;
 import com.ai.resume.builder.utilities.HeadersUtility;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,12 +27,10 @@ public class AuditFilter implements Filter {
     private String secretKey;
     private final AuditRepository auditRepository;
     private static final Logger logger = LoggerFactory.getLogger(AuditFilter.class);
-    private final EncryptionUtil encryptionUtil;
 
 
-    public AuditFilter(AuditRepository auditRepository, EncryptionUtil encryptionUtil) {
+    public AuditFilter(AuditRepository auditRepository) {
         this.auditRepository = auditRepository;
-        this.encryptionUtil = encryptionUtil;
     }
 
     @Override
@@ -66,7 +65,7 @@ public class AuditFilter implements Filter {
 
             audit.setTimestamp(DefaultValuesPopulator.getCurrentTimestamp());
             audit.setMethodName(requestWrapper.getMethod());
-            audit.setRequest(encryptionUtil.encrypt(requestHeaders + "\n" + "Request Body: " + requestBody, secretKey));
+            audit.setRequest(EncryptionUtil.encrypt(requestHeaders + "\n" + "Request Body: " + requestBody, secretKey));
             audit.setResponse(responseHeaders + "\n" + "Response Body: " + responseBody);
             audit.setStatus(String.valueOf(statusCode));
             audit.setUri(requestWrapper.getRequestURI());

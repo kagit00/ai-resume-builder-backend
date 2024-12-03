@@ -1,5 +1,6 @@
 package com.ai.resume.builder.utilities;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -11,14 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public final class Connector {
-    private static final Logger log = LoggerFactory.getLogger(Connector.class);
-
     private Connector() {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
-    public static String postRequest(String url, String apiKey, String title, String sectionType) {
+    public static String performRequest(String url, String apiKey, String title, String sectionType, HttpMethod methodType) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -28,8 +28,8 @@ public final class Connector {
         // Build the request payload for Groq API
         HttpEntity<Map<String, Object>> entity = getMapHttpEntity(title, sectionType, headers);
 
-        // Make the POST request
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        // Make the request
+        ResponseEntity<String> response = restTemplate.exchange(url, methodType, entity, String.class);
 
         String rawResponse = response.getBody();
         log.info("Raw Response: {}", rawResponse);
@@ -46,11 +46,9 @@ public final class Connector {
         message.put("content", "Generate " + sectionType + " for a resume titled: " + title);
         messages.add(message);
 
-        // Specify the model
         requestBody.put("messages", messages);
         requestBody.put("model", "mixtral-8x7b-32768");
 
-        // Wrap the request body and headers in an HttpEntity
         return new HttpEntity<>(requestBody, headers);
     }
 }

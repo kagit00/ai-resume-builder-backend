@@ -9,9 +9,10 @@ import com.ai.resume.builder.security.OAuth2SuccessHandler;
 import com.ai.resume.builder.services.CustomOAuth2UserService;
 import com.ai.resume.builder.utilities.Constant;
 import jakarta.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -28,6 +29,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The type Security config.
@@ -35,37 +37,15 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@AllArgsConstructor
 public class SecurityConfig {
-    @Value("${ui.domain.uri}")
-    private String uiDomainUri;
+    private final Environment environment;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final AuthTokenFilter authTokenFilter;
     private final OAuth2SuccessHandler successHandler;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final EntityManager entityManager;
-
-    /**
-     * Instantiates a new Security config.
-     *
-     * @param unauthorizedHandler the unauthorized handler
-     * @param authTokenFilter     the auth token filter
-     */
-    public SecurityConfig(
-            JwtAuthenticationEntryPoint unauthorizedHandler,
-            AuthTokenFilter authTokenFilter,
-            OAuth2SuccessHandler successHandler,
-            UserRepository userRepository,
-            RoleRepository roleRepository,
-            EntityManager entityManager
-    ) {
-        this.unauthorizedHandler = unauthorizedHandler;
-        this.authTokenFilter = authTokenFilter;
-        this.successHandler = successHandler;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.entityManager = entityManager;
-    }
 
     /**
      * Password encoder password encoder.
@@ -108,7 +88,7 @@ public class SecurityConfig {
                     .cors(cors -> cors
                             .configurationSource(request -> {
                                 CorsConfiguration corsConfiguration = new CorsConfiguration();
-                                corsConfiguration.setAllowedOrigins(List.of(uiDomainUri));
+                                corsConfiguration.setAllowedOrigins(List.of(Objects.requireNonNull(environment.getProperty("ui.domain.uri"))));
                                 corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                                 corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                                 corsConfiguration.setAllowCredentials(true);

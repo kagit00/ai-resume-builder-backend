@@ -1,22 +1,19 @@
-package com.ai.resume.builder.encryption;
+package com.ai.resume.builder.utilities;
 
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 
-/**
- * The type Encryption util.
- */
-@Component
-public class EncryptionUtil {
-    private static final Logger logger = LoggerFactory.getLogger(EncryptionUtil.class);
+@Slf4j
+public final class EncryptionUtil {
+
+    private EncryptionUtil() {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
 
     /**
      * Encrypt string.
@@ -24,7 +21,7 @@ public class EncryptionUtil {
      * @param data the data
      * @return the string
      */
-    public String encrypt(String data, String secretKey) {
+    public static String encrypt(String data, String secretKey) {
         try {
             Cipher cipher = Cipher.getInstance("AES/CFB/NoPadding");
             byte[] iv = generateRandomIV();
@@ -37,7 +34,7 @@ public class EncryptionUtil {
             System.arraycopy(encrypted, 0, combined, iv.length, encrypted.length);
             return Base64.encodeBase64String(combined);
         } catch (Exception e) {
-            logger.error("Error encrypting data: {}", e.getMessage());
+            log.error("Error encrypting data: {}", e.getMessage());
             return "";
         }
     }
@@ -48,11 +45,11 @@ public class EncryptionUtil {
      * @param encryptedData the encrypted data
      * @return the string
      */
-    public String decrypt(String encryptedData, String secretKey) {
+    public static String decrypt(String encryptedData, String secretKey) {
         try {
             Cipher cipher = Cipher.getInstance("AES/CFB/NoPadding");
             byte[] combined = Base64.decodeBase64(encryptedData);
-            byte[] iv = new byte[16]; // Assuming a 16-byte IV
+            byte[] iv = new byte[16];
             byte[] encrypted = new byte[combined.length - iv.length];
             System.arraycopy(combined, 0, iv, 0, iv.length);
             System.arraycopy(combined, iv.length, encrypted, 0, encrypted.length);
@@ -62,12 +59,12 @@ public class EncryptionUtil {
             byte[] decrypted = cipher.doFinal(encrypted);
             return new String(decrypted);
         } catch (Exception e) {
-            logger.error("Error decrypting data: {}", e.getMessage());
+            log.error("Error decrypting data: {}", e.getMessage());
             return "";
         }
     }
 
-    private byte[] generateRandomIV() {
+    private static byte[] generateRandomIV() {
         SecureRandom secureRandom = new SecureRandom();
         byte[] iv = new byte[16];
         secureRandom.nextBytes(iv);

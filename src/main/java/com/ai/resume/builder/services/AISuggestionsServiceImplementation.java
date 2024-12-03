@@ -6,40 +6,38 @@ import com.ai.resume.builder.utilities.Connector;
 import com.ai.resume.builder.utilities.Constant;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
+@Slf4j
+@AllArgsConstructor
 public class AISuggestionsServiceImplementation implements AISuggestionsService {
-
-    @Value("${groq.api.url}")
-    private String groqUrl;
-    @Value("${groq.api.key}")
-    private String groqApiKey;
-    private final AISuggestion aiSuggestion = new AISuggestion();
-    private static final Logger log = LoggerFactory.getLogger(AISuggestionsServiceImplementation.class);
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Environment environment;
+    private final ObjectMapper objectMapper;
 
 
     @Override
     public AISuggestion generateSuggestions(String title, String sectionType) {
-        String generatedText = "";
+        String generatedText;
+        HttpMethod methodType = HttpMethod.POST;
+        String groqUrl = environment.getProperty("groq.api.url");
+        String groqApiKey = environment.getProperty("groq.api.key");
 
-        // Call the Groq API with the updated method
-        String response = Connector.postRequest(groqUrl, groqApiKey, title, sectionType);
+        String response = Connector.performRequest(groqUrl, groqApiKey, title, sectionType, methodType);
         generatedText = parseResponse(response);
         log.debug(generatedText);
 
-        aiSuggestion.setGeneratedSuggestion(generatedText);
-        return aiSuggestion;
+        return AISuggestion.builder().generatedSuggestion(generatedText).build();
     }
 
     private String parseResponse(String rawResponse) {
-        String beautifiedResponse = "";
+        String beautifiedResponse;
         if (Objects.isNull(rawResponse) || rawResponse.isEmpty())
             throw new InternalServerErrorException("No response received from the AI.");
 

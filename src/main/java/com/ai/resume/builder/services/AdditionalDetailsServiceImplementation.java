@@ -59,6 +59,9 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
     public AdditionalDetailsResponse getAdditionalDetails(UUID resumeId) {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         AdditionalDetails additionalDetails = additionalDetailsRepository.findByResume(resume);
+        if (Objects.isNull(additionalDetails)) {
+            return AdditionalDetailsResponse.builder().build();
+        }
         return ResponseMakerUtility.getAdditionalDetailsResponse(additionalDetails);
     }
 

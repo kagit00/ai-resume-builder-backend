@@ -5,7 +5,6 @@ import com.ai.resume.builder.exceptions.InternalServerErrorException;
 import com.ai.resume.builder.models.*;
 import com.ai.resume.builder.models.TransactionDetails;
 import com.ai.resume.builder.repository.*;
-import com.ai.resume.builder.utilities.Constant;
 import com.ai.resume.builder.utilities.DefaultValuesPopulator;
 import com.braintreegateway.*;
 import jakarta.persistence.EntityManager;

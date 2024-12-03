@@ -6,7 +6,6 @@ import com.ai.resume.builder.models.NoContent;
 import com.ai.resume.builder.models.Notification;
 import com.ai.resume.builder.models.PasswordDTO;
 import com.ai.resume.builder.services.UserService;
-import com.ai.resume.builder.validation.ValidPassword;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

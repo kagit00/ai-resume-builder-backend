@@ -21,12 +21,10 @@ public class ResumeAnalysisController {
     @PostMapping(value = "/upload-and-analyze", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> uploadAndAnalyzeResume(@RequestParam("file") MultipartFile file, @RequestParam("jobDescription") String jobDescription) {
         try {
-            // Extract text from the uploaded file
             String resumeContent = resumeAnalysisService.extractTextFromPdfImage(file);
-
-            // Analyze resume content
             ResumeAnalysisResult result = resumeAnalysisService.analyzeResume(resumeContent, jobDescription);
             return ResponseEntity.ok(result);
+
         } catch (Exception e) {
             throw new InternalServerErrorException(e.getMessage());
         }

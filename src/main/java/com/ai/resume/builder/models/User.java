@@ -40,7 +40,6 @@ public class User implements UserDetails, Serializable {
     private List<Resume> resumes = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JsonManagedReference
     @Builder.Default
     @JoinTable(
             name = "user_roles",
@@ -65,9 +64,6 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (roles == null || roles.isEmpty()) {
-            log.warn("No roles assigned to user: {}", username);
-        }
         return roles.stream()
                 .map(role -> new Authority(role.getName()))
                 .collect(Collectors.toSet());
