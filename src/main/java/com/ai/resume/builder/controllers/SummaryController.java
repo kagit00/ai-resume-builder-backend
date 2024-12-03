@@ -56,7 +56,7 @@ public class SummaryController {
     @Transactional
     @PutMapping(value = "/{resumeId}/summary", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateResumeSummary(@RequestBody ResumeSummaryRequest resumeSummaryRequest, @PathVariable("resumeId") String resumeId) {
-        resumeSummaryService.updateResume(resumeSummaryRequest, UUID.fromString(resumeId));
+        resumeSummaryService.updateResumeSummary(resumeSummaryRequest, UUID.fromString(resumeId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

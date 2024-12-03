@@ -8,5 +8,5 @@ public interface ResumeSummaryService {
     void saveResumeSummary(ResumeSummaryRequest resumeSummaryRequest, UUID resumeId);
     ResumeSummaryResponse getSummary(UUID resumeId);
     void deleteSummary(UUID resumeId);
-    void updateResume(ResumeSummaryRequest resumeSummaryRequest, UUID resumeId);
+    void updateResumeSummary(ResumeSummaryRequest resumeSummaryRequest, UUID resumeId);
 }

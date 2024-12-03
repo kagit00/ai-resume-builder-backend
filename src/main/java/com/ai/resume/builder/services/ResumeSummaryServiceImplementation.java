@@ -36,7 +36,6 @@ public class ResumeSummaryServiceImplementation implements ResumeSummaryService 
         summary.setResume(resume);
         resume.setResumeSummary(summary);
         resume.setUpdatedAt(DefaultValuesPopulator.getCurrentTimestamp());
-        summaryRepository.save(summary);
         resumeRepository.save(resume);
     }
 
@@ -66,7 +65,7 @@ public class ResumeSummaryServiceImplementation implements ResumeSummaryService 
 
     @Override
     @CacheEvict(value = "summaryCache", allEntries = true)
-    public void updateResume(ResumeSummaryRequest resumeSummaryRequest, UUID resumeId) {
+    public void updateResumeSummary(ResumeSummaryRequest resumeSummaryRequest, UUID resumeId) {
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
 
         ResumeSummary rs = resume.getResumeSummary();
