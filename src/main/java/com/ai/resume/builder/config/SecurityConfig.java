@@ -96,7 +96,10 @@ public class SecurityConfig {
                             }))
                     .authorizeHttpRequests(auth ->
                             auth
-                                    .requestMatchers("/oauth2/", "/login/**", "/error", "/user", "/auth/log-in", "/heartbeat").permitAll()
+                                    .requestMatchers("/oauth2/", "/login/**", "/error",
+                                            "/user", "/auth/log-in", "/heartbeat", "/swagger-ui/**",
+                                            "/v3/api-docs/**", "/swagger-ui.html")
+                                    .permitAll()
                                     .requestMatchers("/user/**", "/resume/**")
                                     .hasAnyAuthority(Constant.FREE_USER, Constant.PREMIUM_USER)
                                     .requestMatchers("/resume/analysis/**")
