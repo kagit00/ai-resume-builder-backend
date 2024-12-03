@@ -181,7 +181,7 @@ To run the unit tests using Maven:
 ## API Specification
 
 - Please click on the provided link to access all the applicable API specifications. 
-- Access Link: https://shorturl.at/ui4Vg
+- Access Link: https://shorturl.at/D0WW7
 - Docs in JSON: https://shorturl.at/8zq1b
 
 ## Contributing
