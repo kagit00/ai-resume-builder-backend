@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.http.HttpEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -19,20 +21,26 @@ public final class Connector {
     }
 
     public static String performRequest(String url, String apiKey, String title, String sectionType, HttpMethod methodType) {
-        RestTemplate restTemplate = new RestTemplate();
+        String rawResponse = "";
+        try {
+            RestTemplate restTemplate = new RestTemplate();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + apiKey);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + apiKey);
 
-        // Build the request payload for Groq API
-        HttpEntity<Map<String, Object>> entity = getMapHttpEntity(title, sectionType, headers);
+            // Build the request payload for Groq API
+            HttpEntity<Map<String, Object>> entity = getMapHttpEntity(title, sectionType, headers);
 
-        // Make the request
-        ResponseEntity<String> response = restTemplate.exchange(url, methodType, entity, String.class);
+            // Make the request
+            ResponseEntity<String> response = restTemplate.exchange(url, methodType, entity, String.class);
 
-        String rawResponse = response.getBody();
-        log.info("Raw Response: {}", rawResponse);
+            rawResponse = response.getBody();
+            log.info("Raw Response: {}", rawResponse);
+
+        } catch (ResourceAccessException | HttpClientErrorException e) {
+            log.error("Error Connecting GROQ API");
+        }
 
         return rawResponse;
     }

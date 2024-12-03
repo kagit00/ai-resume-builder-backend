@@ -12,6 +12,17 @@ public final class ImageCompressionUtility {
     }
 
     public static void compressImage(BufferedImage image, File outputFile) throws IOException {
+        if (image == null) {
+            throw new IOException("Image cannot be null");
+        }
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        if (width <= 0 || height <= 0) {
+            throw new IOException("Invalid image dimensions: width and height must be greater than 0");
+        }
+
         BufferedImage compressedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
         compressedImage.createGraphics().drawImage(image, 0, 0, null);
 
