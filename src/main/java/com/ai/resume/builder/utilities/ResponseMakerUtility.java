@@ -9,6 +9,8 @@ import com.ai.resume.builder.models.Language;
 import com.ai.resume.builder.models.ResumeSection;
 import com.ai.resume.builder.models.User;
 
+import java.util.UUID;
+
 public final class ResponseMakerUtility {
 
     private ResponseMakerUtility() {

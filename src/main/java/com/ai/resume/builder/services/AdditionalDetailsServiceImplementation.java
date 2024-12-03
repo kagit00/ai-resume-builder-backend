@@ -16,6 +16,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -68,8 +70,16 @@ public class AdditionalDetailsServiceImplementation implements AdditionalDetails
     @Override
     @CacheEvict(value = "additionalDetailsCache", allEntries = true)
     public AdditionalDetailsResponse updateAdditionalDetails(AdditionalDetailsRequest additionalDetailsRequest, UUID resumeId, UUID additionalDetailsId) {
+        if (Objects.isNull(additionalDetailsRequest)) {
+            throw new BadRequestException("Additional Details Should've Valid Value");
+        }
+
         Resume resume = BasicUtility.getResumeById(resumeId, resumeRepository);
         AdditionalDetails additionalDetails = additionalDetailsRepository.findByResume(resume);
+
+        if (Objects.isNull(additionalDetails)) {
+            throw new NoSuchElementException("Additional Details not found");
+        }
 
         additionalDetails.setGithubLink(additionalDetailsRequest.getGithubLink());
         additionalDetails.setPhoneNumber(additionalDetailsRequest.getPhoneNumber());

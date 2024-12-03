@@ -20,7 +20,7 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
         // - At least one uppercase letter
         // - At least one special character
         // - At least one digit
-        return password.matches("^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*\\d).+$");
+        return password.matches("^(?!.*\\s)(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*\\d).+$");
     }
 }
 

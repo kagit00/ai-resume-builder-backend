@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -20,33 +20,46 @@ import java.util.UUID;
 public class Resume implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     @Column(nullable = false)
     private String title;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
     private User user;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ResumeStatus status;
+
+    @Builder.Default
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<ResumeSection> resumeSections = new ArrayList<>();
+
+    @Builder.Default
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Language> languages = new ArrayList<>();
+
     @OneToOne(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private ResumeSummary resumeSummary;
+
     private String skills;
+
     @OneToOne(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private AdditionalDetails additionalDetails;
+
     @Column(nullable = false)
     private String createdAt;
+
     @Column(nullable = false)
     private String updatedAt;
 }
