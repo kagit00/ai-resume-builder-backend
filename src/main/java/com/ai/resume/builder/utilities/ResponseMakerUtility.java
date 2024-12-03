@@ -8,8 +8,7 @@ import com.ai.resume.builder.models.AdditionalDetails;
 import com.ai.resume.builder.models.Language;
 import com.ai.resume.builder.models.ResumeSection;
 import com.ai.resume.builder.models.User;
-
-import java.util.UUID;
+import java.util.Objects;
 
 public final class ResponseMakerUtility {
 
@@ -25,6 +24,9 @@ public final class ResponseMakerUtility {
     }
 
     public static AdditionalDetailsResponse getAdditionalDetailsResponse(AdditionalDetails additionalDetails) {
+        if (Objects.isNull(additionalDetails)) {
+            return null;
+        }
         return AdditionalDetailsResponse.builder()
                 .id(additionalDetails.getId()).githubLink(additionalDetails.getGithubLink())
                 .phoneNumber(additionalDetails.getPhoneNumber()).linkedInProfileLink(additionalDetails.getLinkedInProfileLink())
