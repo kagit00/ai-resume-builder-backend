@@ -178,7 +178,11 @@ To run the unit tests using Maven:
 - **Resume Analysis**: Only Premium users can analyse their resume against job description. For now, it just tells how many matching and un-matching keywords are there in the resume considering the JD. In future enhancement, ATS score, nlp etc will be used for more granular analysis.
 
 
+## API Specification
 
+- Please click on the provided link to access all the applicable API specifications. 
+- Access Link: https://shorturl.at/ui4Vg
+- Docs in JSON: https://shorturl.at/8zq1b
 
 ## Contributing
 
