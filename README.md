@@ -1,5 +1,7 @@
-# Project Title & Live Link
-**AI Resume Builder** | Domain Link: https://shorturl.at/0qgVb
+## Project Title & Live Link
+- Application Name: **AI Resume Builder** 
+- Backend Domain Link: https://shorturl.at/0qgVb
+- UI Domain Link: https://ai-resume-builder-frontend-j3t9.vercel.app/
 
 
 
@@ -181,8 +183,8 @@ To run the unit tests using Maven:
 ## API Specification
 
 - Please click on the provided link to access all the applicable API specifications. 
-- Access Link: https://shorturl.at/D0WW7
-- Docs in JSON: https://shorturl.at/8zq1b
+- Access Link: https://shorturl.at/D0WW7 (may take few minutes to load since the application had been deployed on a sandbox env)
+- Docs in JSON: https://shorturl.at/8zq1b (may take few minutes to load since the application had been deployed on a sandbox env)
 
 ## Contributing
 
