@@ -7,6 +7,7 @@
 
 ## Table of Contents
 - [Description](#description)
+- [How It Works](#how-it-works)
 - [Installation](#install--run)
 - [Configuration](#configuration)
 - [API Specification](#api-specification)
@@ -38,7 +39,7 @@ and keyword optimization, increasing the likelihood of landing job interviews.
    ```bash
    mvn spring-boot:run
 
-### Configuration
+## Configuration
 - Currently, this project has been deployed using Google App Engine (GAE). The potential passkeys come from GCP Secret Manager. 
 - These Passkeys mostly consist of Groq API Key, OCR API Key, oAuth2 Regn Client Id, oAuth2 Regn. Client Secret, Postgres Database creds etc.
 - Few of the passkeys (e.g. Oauth Redirect Uri, GCP secret key, Project Id, etc.) comes from GitHub Secret Manager.
@@ -169,7 +170,6 @@ To run the unit tests using Maven:
 
 
 
-
 ## Features
 
 - **User Authentication**: Supports login and registration with JWT-based authentication and oauth2 based authentication (as of now google only). As future scope, I will be integrating github and facebook client as well for ease of access.
@@ -178,6 +178,41 @@ To run the unit tests using Maven:
 - **AI Completion**: During resume creation process, AI tool like GROQ AI has been put in place to assist user in writing content for their resumes. Currently, they can take leverage of it to write projec, experience and summary sections. 
 - **Download & Share Resume**: Only Premium users can download and share resumes in PDF format.
 - **Resume Analysis**: Only Premium users can analyse their resume against job description. For now, it just tells how many matching and un-matching keywords are there in the resume considering the JD. In future enhancement, ATS score, nlp etc will be used for more granular analysis.
+
+
+## How It Works (UI + Backend)
+
+- There are four sections on the UI (e.g. Profile & Miscellaneous, Pending Resumes, Downloadable Resumes, Resume Analysis). You can navigate 
+  to each of the section through the dropdown at left side of UI. 
+
+- Talking about Profile section, There are three parts (e.g. Resume Creation Button, Profile Details, Resume Creation Tips). In the Profile 
+  Details part, you can do following operations
+  1. View Your Profile
+  2. If You are a manual user (jwt user), change your password (if you wish). Forgot Password has been staged for Future scope.
+  3. Upgrade to Premium
+  4. If You are already a Premium member & wish to cancel subscription, click on "Cancel Premium Membership"
+  5. Once a user register himself/herself into the application, email notification would be enabled automatically. You can adjust if needed.
+  
+- If you want to create a resume, You can do that on the "Profile & Miscellaneous" section. You can also do it on "Pending Resumes" and 
+  "Downloadable Resumes" sections but in this case, you shouldn't have any prior resumes.
+- There would be a Resume Creation Popup on clicking Resume Creation button. You have to enter a desired designation (e.g. Software Engineer,
+  Java Engineer, etc.). Click on the "Confirm" button to proceed.
+
+- Thereafter, You will see a window where on the left side, There will be multiple forms (appears one by one) for sections including "Summary", 
+  "Education", "Experience", "Projects", "Languages", "Skills" & "Additional Details". On the right side, You will see a preview of resume
+  of how you did.
+
+- You have to fill up all the sections to complete resume creation. In the last section, You have to put valid linkedin, github phonenumber.
+
+- Once the resume creation done, you resume will be saved and appears under "Downloadable Resumes". 
+
+- If you are a free user, kindly upgrade to premium for downloading resume you have created. If you are already a premium user, You can 
+  download & share your resume as PDF. You will be also communicated via E-mail about the process.
+
+- If you can't create and complete your resume creation in one go, You can edit or resume them from the "Pending Resumes" section. Your
+  previously entered details will be saved for ease.
+
+- Lastly, There is another feature "Resume Analysis", where you can not only analyze any resume (including the one you created here or any other websites)
 
 
 ## API Specification
