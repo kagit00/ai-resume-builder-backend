@@ -109,6 +109,14 @@ public class ResumeAnalysisServiceImplementation implements ResumeAnalysisServic
 
             // Create temp directory if it doesn't exist
             File tempDir = new File(System.getProperty("java.io.tmpdir"), "appUploads");
+            if (!tempDir.exists() && !tempDir.mkdirs()) {
+                throw new InternalServerErrorException("Failed to create temporary directory.");
+            }
+
+            // Ensure the directory is valid
+            if (!PDFValidationUtility.isValidPath(tempDir)) {
+                throw new InternalServerErrorException("Invalid temporary directory path.");
+            }
 
             // Save the file to a controlled directory
             File tempFile = new File(tempDir, "uploaded_" + System.currentTimeMillis() + ".pdf");
