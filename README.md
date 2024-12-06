@@ -202,9 +202,9 @@ To run the unit tests using Maven:
   "Education", "Experience", "Projects", "Languages", "Skills" & "Additional Details". On the right side, You will see a preview of resume
   of how you did.
 
-- You have to fill up all the sections to complete resume creation. In the last section, You have to put valid linkedin, github phonenumber.
+- You have to fill up all the sections to complete resume creation. In the last section, You have to put valid linkedin, github, phonenumber.
 
-- Once the resume creation done, you resume will be saved and appears under "Downloadable Resumes". 
+- Once the resume creation done, you resume will be saved and appear under "Downloadable Resumes". 
 
 - If you are a free user, kindly upgrade to premium for downloading resume you have created. If you are already a premium user, You can 
   download & share your resume as PDF. You will be also communicated via E-mail about the process.
@@ -212,7 +212,7 @@ To run the unit tests using Maven:
 - If you can't create and complete your resume creation in one go, You can edit or resume them from the "Pending Resumes" section. Your
   previously entered details will be saved for ease.
 
-- Lastly, There is another feature "Resume Analysis", where you can not only analyze any resume (including the one you created here or any other websites)
+- Lastly, There is another feature "Resume Analysis", where you can analyze any resume (including the one you created here or any other websites)
 
 
 ## API Specification
